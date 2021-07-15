@@ -6,40 +6,37 @@ namespace AzureDevopsStateTracker.DTOs.Update
     public class UpdatedWorkItemDTO
     {
         [JsonProperty("resource")]
-        public ResourceDTO Resource { get; set; }
+        public Resource Resource { get; set; }
     }
 
-    public class ResourceDTO
+    public class Resource
     {
         [JsonProperty("workItemId")]
         public string WorkItemId { get; set; }
 
         [JsonProperty("fields")]
-        public ResourceFieldsDTO Fields { get; set; }
+        public ResourceFields Fields { get; set; }
 
         [JsonProperty("revision")]
-        public RevisionDTO Revision { get; set; }
+        public Revision Revision { get; set; }
     }
 
-    public class RevisionDTO
+    public class Revision
     {
         [JsonProperty("fields")]
-        public RevisionFieldsDTO Fields { get; set; }
+        public Fields Fields { get; set; }
     }
 
-    public class ResourceFieldsDTO
+    public class ResourceFields
     {
         [JsonProperty("System.State")]
         public OldNewValues State { get; set; }
 
         [JsonProperty("Microsoft.VSTS.Common.StateChangeDate")]
         public DateTimeOldNewValues StateChangeDate { get; set; }
-    }
 
-    public class RevisionFieldsDTO
-    {
-        [JsonProperty("System.AssignedTo")]
-        public string AssignedTo { get; set; }
+        [JsonProperty("System.ChangedBy")]
+        public ChangedByOldNewValues ChangedBy { get; set; }
     }
 
     public class OldNewValues
@@ -60,5 +57,12 @@ namespace AzureDevopsStateTracker.DTOs.Update
         public DateTime NewValue { get; set; }
     }
 
+    public class ChangedByOldNewValues
+    {
+        [JsonProperty("oldValue")]
+        public string OldValue { get; set; }
 
+        [JsonProperty("newValue")]
+        public string NewValue { get; set; }
+    }
 }

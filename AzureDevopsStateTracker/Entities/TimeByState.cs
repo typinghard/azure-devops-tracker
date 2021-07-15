@@ -3,22 +3,33 @@ using System;
 
 namespace AzureDevopsStateTracker.Entities
 {
-    public class WorkItemStatusTime : Entity
+    public class TimeByState : Entity
     {
+        public DateTime UpdatedAt { get; private set; }
         public string WorkItemId { get; private set; }
         public string State { get; private set; }
-        public TimeSpan TotalTime { get; private set; }
+        public long TotalTime { get; private set; }
+        public long TotalWorkedTime { get; private set; }
         public WorkItem WorkItem { get; private set; }
 
-        private WorkItemStatusTime() { }
+        private TimeByState() { }
 
-        public WorkItemStatusTime(string workItemId, string state, TimeSpan totalTime)
+        public TimeByState(string workItemId, string state, long totalTime, long totalWorkedTime)
         {
             WorkItemId = workItemId;
             State = state;
             TotalTime = totalTime;
+            TotalWorkedTime = totalWorkedTime;
+            UpdatedAt = CreatedAt;
 
             Validate();
+        }
+
+        public void Update(long totalTime, long totalWorkedTime)
+        {
+            TotalTime = totalTime;
+            TotalWorkedTime = totalWorkedTime;
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public void Validate()
@@ -28,9 +39,6 @@ namespace AzureDevopsStateTracker.Entities
 
             if (State.IsNullOrEmpty())
                 throw new Exception("State is required");
-
-            if (TotalTime == null || TotalTime == TimeSpan.MinValue)
-                throw new Exception("TotalTime is required");
         }
     }
 }

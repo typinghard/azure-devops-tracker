@@ -7,31 +7,64 @@ namespace AzureDevopsStateTracker.Entities
 {
     public class WorkItem : Entity
     {
+        public string AreaPath { get; private set; }
+        public string TeamProject { get; private set; }
+        public string IterationPath { get; private set; }
         public string AssignedTo { get; private set; }
         public string Type { get; private set; }
         public string CreatedBy { get; private set; }
         public string Title { get; private set; }
-        public string TeamProject { get; private set; }
+        public string Tags { get; private set; }
+        public string Effort { get; private set; }
+        public string OriginalEstimate { get; private set; }
+        public string StoryPoints { get; private set; }
+        public string WorkItemParentId { get; private set; }
+        public string Activity { get; private set; }
 
         private readonly List<WorkItemChange> _workItemsChanges;
         public IReadOnlyCollection<WorkItemChange> WorkItemsChanges => _workItemsChanges;
 
-        private readonly List<WorkItemStatusTime> _workItemsStatusTime;
-        public IReadOnlyCollection<WorkItemStatusTime> WorkItemsStatusTime => _workItemsStatusTime;
+        private readonly List<TimeByState> _timeByState;
+        public IReadOnlyCollection<TimeByState> TimeByStates => _timeByState;
         public string CurrentStatus => _workItemsChanges?.OrderBy(x => x.CreatedAt)?.LastOrDefault()?.NewState;
 
-        public WorkItem() { }
+        private WorkItem()
+        {
+            _workItemsChanges = new List<WorkItemChange>();
+            _timeByState = new List<TimeByState>();
+        }
 
-        public WorkItem(string workItemId, string title, string teamProject, string type, string createdBy) : base(workItemId)
+        public WorkItem(string workItemId) : base(workItemId)
+        {
+            _workItemsChanges = new List<WorkItemChange>();
+            _timeByState = new List<TimeByState>();
+            Validate();
+        }
+
+        public void Update(string title,
+                           string teamProject, string areaPath,
+                           string iterationPath, string type,
+                           string createdBy, string assignedTo,
+                           string tags,
+                           string workItemParentId,
+                           string effort,
+                           string storyPoint,
+                           string originalEstimate,
+                           string activity)
         {
             TeamProject = teamProject;
+            AreaPath = areaPath;
+            IterationPath = iterationPath;
             Type = type;
             Title = title;
             CreatedBy = createdBy;
-
-            _workItemsChanges = new List<WorkItemChange>();
-            _workItemsStatusTime = new List<WorkItemStatusTime>();
-            Validate();
+            AssignedTo = assignedTo;
+            Tags = tags;
+            WorkItemParentId = workItemParentId;
+            Effort = effort;
+            StoryPoints = storyPoint;
+            OriginalEstimate = originalEstimate;
+            Activity = activity;
         }
 
         public void Validate()
@@ -48,31 +81,48 @@ namespace AzureDevopsStateTracker.Entities
             _workItemsChanges.Add(workItemChange);
         }
 
-        public void AddWorkItemStatusTime(WorkItemStatusTime workItemStatusTime)
+        public void AddTimeByState(TimeByState timeByState)
         {
-            if (workItemStatusTime == null)
-                throw new Exception("WorkItemStatusTime is null");
+            if (timeByState == null)
+                throw new Exception("TimeByState is null");
 
-            _workItemsStatusTime.Add(workItemStatusTime);
+            _timeByState.Add(timeByState);
         }
 
-        public void UpdateAssignedTo(string assignedTo)
+        public void AddTimesByState(IEnumerable<TimeByState> timesByState)
         {
-            AssignedTo = assignedTo;
+            if (!timesByState.Any())
+                return;
+
+            foreach (var timeByState in timesByState)
+                AddTimeByState(timeByState);
         }
 
-        public IEnumerable<Dictionary<string, string>> CalculateTotalTimeByState()
+        public void ClearTimesByState()
         {
-            var totalTimeByStateList = new List<Dictionary<string, string>>();
-            if (!_workItemsStatusTime.Any())
-                return totalTimeByStateList;
+            _timeByState.Clear();
+        }
 
-            foreach (var item in _workItemsStatusTime.OrderBy(x => x.CreatedAt).GroupBy(x => x.State))
-                totalTimeByStateList.Add(new Dictionary<string, string>() {
-                    { item.Key, item.Select(x => x.TotalTime).Sum().ToString() }
-                });
+        public IEnumerable<TimeByState> CalculateTotalTimeByState()
+        {
+            var timesByStateList = new List<TimeByState>();
+            if (!_workItemsChanges.Any())
+                return timesByStateList;
 
-            return totalTimeByStateList;
+            foreach (var workItemChange in _workItemsChanges.OrderBy(x => x.CreatedAt).GroupBy(x => x.OldState).Where(x => x.Key != null))
+            {
+                var totalTime = TimeSpan.Zero;
+                var totalWorkedTime = TimeSpan.Zero;
+                foreach (var data in workItemChange)
+                {
+                    totalTime += data.CalculateTotalTime();
+                    totalWorkedTime += data.CalculateTotalWorkedTime();
+                }
+
+                timesByStateList.Add(new TimeByState(Id, workItemChange.Key, totalTime.Ticks, totalWorkedTime.Ticks));
+            }
+
+            return timesByStateList;
         }
     }
 }

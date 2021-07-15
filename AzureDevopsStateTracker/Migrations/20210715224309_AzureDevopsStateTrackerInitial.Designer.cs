@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AzureDevopsStateTracker.Migrations
 {
     [DbContext(typeof(AzureDevopsStateTrackerContext))]
-    [Migration("20210707224712_AzureDevopsStateTrackerInitial")]
+    [Migration("20210715224309_AzureDevopsStateTrackerInitial")]
     partial class AzureDevopsStateTrackerInitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,9 +23,45 @@ namespace AzureDevopsStateTracker.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("AzureDevopsStateTracker.Entities.TimeByState", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("State")
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<long>("TotalTime")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("TotalWorkedTime")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("WorkItemId")
+                        .HasColumnType("varchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WorkItemId");
+
+                    b.ToTable("TimeByStates");
+                });
+
             modelBuilder.Entity("AzureDevopsStateTracker.Entities.WorkItem", b =>
                 {
                     b.Property<string>("Id")
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("Activity")
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("AreaPath")
                         .HasColumnType("varchar(200)");
 
                     b.Property<string>("AssignedTo")
@@ -37,6 +73,21 @@ namespace AzureDevopsStateTracker.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("varchar(200)");
 
+                    b.Property<string>("Effort")
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("IterationPath")
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("OriginalEstimate")
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("StoryPoints")
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("Tags")
+                        .HasColumnType("varchar(200)");
+
                     b.Property<string>("TeamProject")
                         .HasColumnType("varchar(200)");
 
@@ -44,6 +95,9 @@ namespace AzureDevopsStateTracker.Migrations
                         .HasColumnType("varchar(200)");
 
                     b.Property<string>("Type")
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("WorkItemParentId")
                         .HasColumnType("varchar(200)");
 
                     b.HasKey("Id");
@@ -54,6 +108,9 @@ namespace AzureDevopsStateTracker.Migrations
             modelBuilder.Entity("AzureDevopsStateTracker.Entities.WorkItemChange", b =>
                 {
                     b.Property<string>("Id")
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("ChangedBy")
                         .HasColumnType("varchar(200)");
 
                     b.Property<DateTime>("CreatedAt")
@@ -81,41 +138,17 @@ namespace AzureDevopsStateTracker.Migrations
                     b.ToTable("WorkItemsChange");
                 });
 
-            modelBuilder.Entity("AzureDevopsStateTracker.Entities.WorkItemStatusTime", b =>
+            modelBuilder.Entity("AzureDevopsStateTracker.Entities.TimeByState", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("State")
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<TimeSpan>("TotalTime")
-                        .HasColumnType("time");
-
-                    b.Property<string>("WorkItemId")
-                        .HasColumnType("varchar(200)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("WorkItemId");
-
-                    b.ToTable("WorkItemsStatusTime");
+                    b.HasOne("AzureDevopsStateTracker.Entities.WorkItem", "WorkItem")
+                        .WithMany("TimeByStates")
+                        .HasForeignKey("WorkItemId");
                 });
 
             modelBuilder.Entity("AzureDevopsStateTracker.Entities.WorkItemChange", b =>
                 {
                     b.HasOne("AzureDevopsStateTracker.Entities.WorkItem", "WorkItem")
                         .WithMany("WorkItemsChanges")
-                        .HasForeignKey("WorkItemId");
-                });
-
-            modelBuilder.Entity("AzureDevopsStateTracker.Entities.WorkItemStatusTime", b =>
-                {
-                    b.HasOne("AzureDevopsStateTracker.Entities.WorkItem", "WorkItem")
-                        .WithMany("WorkItemsStatusTime")
                         .HasForeignKey("WorkItemId");
                 });
 #pragma warning restore 612, 618

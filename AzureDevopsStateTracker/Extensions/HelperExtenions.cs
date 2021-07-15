@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace AzureDevopsStateTracker.Extensions
 {
@@ -21,6 +24,17 @@ namespace AzureDevopsStateTracker.Extensions
                 sumTillNowTimeSpan += timeSpan;
 
             return sumTillNowTimeSpan;
+        }
+
+        public static string ExtractEmail(this string user)
+        {
+            if (user is null)
+                return user;
+
+            if (!user.Contains(" <") && !user.TrimEnd().Contains(">"))
+                return user;
+
+            return user.Split("<").LastOrDefault().Split(">").FirstOrDefault();
         }
     }
 }

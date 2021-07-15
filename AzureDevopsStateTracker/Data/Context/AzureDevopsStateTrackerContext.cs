@@ -1,7 +1,5 @@
 ﻿using AzureDevopsStateTracker.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Linq;
 
@@ -14,7 +12,7 @@ namespace AzureDevopsStateTracker.Data.Context
 
         public DbSet<WorkItem> WorkItems { get; set; }
         public DbSet<WorkItemChange> WorkItemsChange { get; set; }
-        public DbSet<WorkItemStatusTime> WorkItemsStatusTime { get; set; }
+        public DbSet<TimeByState> TimeByStates { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -2,9 +2,11 @@
 using AzureDevopsStateTracker.DTOs.Create;
 using AzureDevopsStateTracker.DTOs.Update;
 using AzureDevopsStateTracker.Entities;
+using AzureDevopsStateTracker.Extensions;
 using AzureDevopsStateTracker.Interfaces;
 using AzureDevopsStateTracker.Interfaces.Internals;
 using System;
+using System.Linq;
 
 namespace AzureDevopsStateTracker.Services
 {
@@ -22,12 +24,21 @@ namespace AzureDevopsStateTracker.Services
 
         public void Create(CreateWorkItemDTO create)
         {
-            var workItem = new WorkItem(
-                create.Resource.Id,
-                create.Resource.Fields.Title,
-                create.Resource.Fields.AssignedTo,
-                create.Resource.Fields.Type,
-                create.Resource.Fields.CreatedBy);
+            var workItem = new WorkItem(create.Resource.Id);
+
+            workItem.Update(create.Resource.Fields.Title,
+                            create.Resource.Fields.TeamProject,
+                            create.Resource.Fields.AreaPath,
+                            create.Resource.Fields.IterationPath,
+                            create.Resource.Fields.Type,
+                            create.Resource.Fields.CreatedBy.ExtractEmail(),
+                            create.Resource.Fields.AssignedTo.ExtractEmail(),
+                            create.Resource.Fields.Tags,
+                            create.Resource.Fields.Parent,
+                            create.Resource.Fields.Effort,
+                            create.Resource.Fields.StoryPoints,
+                            create.Resource.Fields.OriginalEstimate,
+                            create.Resource.Fields.Activity);
 
             AddWorkItemChange(workItem, create);
 
@@ -41,7 +52,19 @@ namespace AzureDevopsStateTracker.Services
             if (workItem is null)
                 return;
 
-            workItem.UpdateAssignedTo(update.Resource.Revision.Fields.AssignedTo);
+            workItem.Update(update.Resource.Revision.Fields.Title,
+                            update.Resource.Revision.Fields.TeamProject,
+                            update.Resource.Revision.Fields.AreaPath,
+                            update.Resource.Revision.Fields.IterationPath,
+                            update.Resource.Revision.Fields.Type,
+                            update.Resource.Revision.Fields.CreatedBy,
+                            update.Resource.Revision.Fields.AssignedTo,
+                            update.Resource.Revision.Fields.Tags,
+                            update.Resource.Revision.Fields.Parent,
+                            update.Resource.Revision.Fields.Effort,
+                            update.Resource.Revision.Fields.StoryPoints,
+                            update.Resource.Revision.Fields.OriginalEstimate,
+                            update.Resource.Revision.Fields.Activity);
 
             AddWorkItemChange(workItem, update);
 
@@ -59,22 +82,26 @@ namespace AzureDevopsStateTracker.Services
         }
 
         #region Support Methods
-        public WorkItemChange ToWorkItemChange(string workItemId, DateTime newDate, string newState, string oldState = null, DateTime? oldDate = null)
+        public WorkItemChange ToWorkItemChange(string workItemId, string changedBy, DateTime newDate, string newState, string oldState = null, DateTime? oldDate = null)
         {
-            return new WorkItemChange(workItemId, newDate, newState, oldState, oldDate);
+            return new WorkItemChange(workItemId, changedBy.ExtractEmail(), newDate, newState, oldState, oldDate);
         }
 
         public void AddWorkItemChange(WorkItem workItem, CreateWorkItemDTO create)
         {
             var workItemChange = ToWorkItemChange(workItem.Id,
+                                                  create.Resource.Fields.ChangedBy,
                                                   create.Resource.Fields.CreatedDate,
                                                   create.Resource.Fields.State);
+
             workItem.AddWorkItemChange(workItemChange);
         }
 
         public void AddWorkItemChange(WorkItem workItem, UpdatedWorkItemDTO update)
         {
+            var changedBy = update.Resource.Revision.Fields.ChangedBy ?? update.Resource.Fields.ChangedBy.NewValue;
             var workItemChange = ToWorkItemChange(workItem.Id,
+                                      changedBy,
                                       update.Resource.Fields.StateChangeDate.NewValue,
                                       update.Resource.Fields.State.NewValue,
                                       update.Resource.Fields.State.OldValue,
@@ -82,20 +109,21 @@ namespace AzureDevopsStateTracker.Services
 
             workItem.AddWorkItemChange(workItemChange);
 
-            AddWorkItemStatusTime(workItem, update.Resource.Fields.State.OldValue, workItemChange.CalculateTotalTime());
+            UpdateTimeByStates(workItem);
         }
 
-
-        public WorkItemStatusTime ToWorkItemStatusTime(string workItemId, string state, TimeSpan totalTime)
+        public void UpdateTimeByStates(WorkItem workItem)
         {
-            return new WorkItemStatusTime(workItemId, state, totalTime);
+            RemoveTimeByStateFromDataBase(workItem);
+
+            workItem.ClearTimesByState();
+            workItem.AddTimesByState(workItem.CalculateTotalTimeByState());
         }
 
-        public void AddWorkItemStatusTime(WorkItem workItem, string state, TimeSpan totalTime)
+        public void RemoveTimeByStateFromDataBase(WorkItem workItem)
         {
-            var workItemStatusTime = ToWorkItemStatusTime(workItem.Id, state, totalTime);
-            workItem.AddWorkItemStatusTime(workItemStatusTime);
-        } 
+            _workItemRepository.RemoveAllTimeByState(workItem.TimeByStates.ToList());
+        }
         #endregion
     }
 }

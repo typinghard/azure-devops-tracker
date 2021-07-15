@@ -1,6 +1,7 @@
 ﻿using AzureDevopsStateTracker.DTOs;
 using AzureDevopsStateTracker.Entities;
 using AzureDevopsStateTracker.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,11 +21,18 @@ namespace AzureDevopsStateTracker.Adapters
                 CreatedBy = workItem.CreatedBy,
                 CurrentStatus = workItem.CurrentStatus,
                 TeamProject = workItem.TeamProject,
+                AreaPath = workItem.AreaPath,
+                IterationPath = workItem.IterationPath,
                 Title = workItem.Title,
                 Type = workItem.Type,
+                Effort = workItem.Effort,
+                StoryPoints = workItem.StoryPoints,
+                OriginalEstimate = workItem.OriginalEstimate,
+                WorkItemParentId = workItem.WorkItemParentId,
+                Activity = workItem.Activity,
+                Tags = workItem.Tags == null ? new List<string>() : workItem.Tags.Split(';').ToList(),
                 WorkItemsChangesDTO = ToWorkItemsChangeDTO(workItem.WorkItemsChanges.OrderBy(x => x.CreatedAt).ToList()),
-                WorkItemsStatusTimeDTO = ToWorkItemsStatusTimeDTO(workItem.WorkItemsStatusTime.OrderBy(x => x.CreatedAt).ToList()),
-                TotalTimeByState = workItem.CalculateTotalTimeByState()
+                TimesByStateDTO = ToTimeByStatesDTO(workItem.CalculateTotalTimeByState().ToList()),
             };
         }
 
@@ -39,7 +47,6 @@ namespace AzureDevopsStateTracker.Adapters
                         workItemsDTO.Add(ToWorkItemDTO(workItem)));
 
             return workItemsDTO
-                     .Where(w => w != null)
                      .ToList();
         }
 
@@ -52,7 +59,8 @@ namespace AzureDevopsStateTracker.Adapters
                 NewDate = workIteChange.NewDate,
                 NewState = workIteChange.NewState,
                 OldState = workIteChange.OldState,
-                OldDate = workIteChange.OldDate
+                OldDate = workIteChange.OldDate,
+                ChangedBy = workIteChange.ChangedBy
             };
         }
 
@@ -71,30 +79,50 @@ namespace AzureDevopsStateTracker.Adapters
                      .ToList();
         }
 
-        public WorkItemStatusTimeDTO ToWorkItemStatusTimeDTO(WorkItemStatusTime workItemStatusTime)
+        public TimeByStateDTO ToTimeByStateDTO(TimeByState workItemStatusTime)
         {
             if (workItemStatusTime == null) return null;
 
-            return new WorkItemStatusTimeDTO()
+            return new TimeByStateDTO()
             {
+                CreatedAt = workItemStatusTime.CreatedAt,
+                UpdatedAt = workItemStatusTime.UpdatedAt,
                 State = workItemStatusTime.State,
-                TotalTime = workItemStatusTime.TotalTime.ToString()
+                TotalTime = ToStringTime(new DateTime(workItemStatusTime.TotalTime).TimeOfDay),
+                TotalWorkedTime = ToStringTime(new DateTime(workItemStatusTime.TotalWorkedTime).TimeOfDay)
             };
         }
 
-        public List<WorkItemStatusTimeDTO> ToWorkItemsStatusTimeDTO(List<WorkItemStatusTime> workItemStatusTimes)
+        public List<TimeByStateDTO> ToTimeByStatesDTO(List<TimeByState> workItemStatusTimes)
         {
-            var workItemStatusTimeDTO = new List<WorkItemStatusTimeDTO>();
+            var workItemStatusTimeDTO = new List<TimeByStateDTO>();
 
             if (workItemStatusTimes == null) return workItemStatusTimeDTO;
 
             workItemStatusTimes.ForEach(
                         workItemStatusTime =>
-                        workItemStatusTimeDTO.Add(ToWorkItemStatusTimeDTO(workItemStatusTime)));
+                        workItemStatusTimeDTO.Add(ToTimeByStateDTO(workItemStatusTime)));
 
             return workItemStatusTimeDTO
                      .Where(w => w != null)
                      .ToList();
+        }
+
+        public string ToStringTime(TimeSpan timeSpan)
+        {
+            if (timeSpan.Days > 0)
+                return $@"{timeSpan:%d} Dia(s) {timeSpan:%h}h e {timeSpan:%m}min e {timeSpan:%s}s";
+
+            if (timeSpan.Hours > 0)
+                return $@"{timeSpan:%h}h e {timeSpan:%m}min e {timeSpan:%s}s";
+
+            if (timeSpan.Minutes > 0)
+                return $@"{timeSpan:%m}min e {timeSpan:%s}s";
+
+            if (timeSpan.Seconds > 0)
+                return $@"{timeSpan:%s}s";
+
+            return $@"{timeSpan:%hh}:{timeSpan:%mm}:{timeSpan:%ss}";
         }
     }
 }
