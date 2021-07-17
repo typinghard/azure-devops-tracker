@@ -44,7 +44,6 @@ namespace AzureDevopsStateTracker.Migrations
                 {
                     Id = table.Column<string>(type: "varchar(200)", nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
-                    UpdatedAt = table.Column<DateTime>(nullable: false),
                     WorkItemId = table.Column<string>(type: "varchar(200)", nullable: true),
                     State = table.Column<string>(type: "varchar(200)", nullable: true),
                     TotalTime = table.Column<long>(nullable: false),

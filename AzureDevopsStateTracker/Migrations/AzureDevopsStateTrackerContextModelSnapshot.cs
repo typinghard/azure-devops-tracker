@@ -38,9 +38,6 @@ namespace AzureDevopsStateTracker.Migrations
                     b.Property<long>("TotalWorkedTime")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("WorkItemId")
                         .HasColumnType("varchar(200)");
 

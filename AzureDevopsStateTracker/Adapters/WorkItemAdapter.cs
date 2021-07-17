@@ -86,7 +86,6 @@ namespace AzureDevopsStateTracker.Adapters
             return new TimeByStateDTO()
             {
                 CreatedAt = workItemStatusTime.CreatedAt,
-                UpdatedAt = workItemStatusTime.UpdatedAt,
                 State = workItemStatusTime.State,
                 TotalTime = ToStringTime(new DateTime(workItemStatusTime.TotalTime).TimeOfDay),
                 TotalWorkedTime = ToStringTime(new DateTime(workItemStatusTime.TotalWorkedTime).TimeOfDay)

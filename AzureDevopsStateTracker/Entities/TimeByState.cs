@@ -5,7 +5,6 @@ namespace AzureDevopsStateTracker.Entities
 {
     public class TimeByState : Entity
     {
-        public DateTime UpdatedAt { get; private set; }
         public string WorkItemId { get; private set; }
         public string State { get; private set; }
         public long TotalTime { get; private set; }
@@ -20,16 +19,8 @@ namespace AzureDevopsStateTracker.Entities
             State = state;
             TotalTime = totalTime;
             TotalWorkedTime = totalWorkedTime;
-            UpdatedAt = CreatedAt;
 
             Validate();
-        }
-
-        public void Update(long totalTime, long totalWorkedTime)
-        {
-            TotalTime = totalTime;
-            TotalWorkedTime = totalWorkedTime;
-            UpdatedAt = DateTime.UtcNow;
         }
 
         public void Validate()

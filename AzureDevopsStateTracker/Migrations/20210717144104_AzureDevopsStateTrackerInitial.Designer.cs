@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AzureDevopsStateTracker.Migrations
 {
     [DbContext(typeof(AzureDevopsStateTrackerContext))]
-    [Migration("20210715224309_AzureDevopsStateTrackerInitial")]
+    [Migration("20210717144104_AzureDevopsStateTrackerInitial")]
     partial class AzureDevopsStateTrackerInitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -39,9 +39,6 @@ namespace AzureDevopsStateTracker.Migrations
 
                     b.Property<long>("TotalWorkedTime")
                         .HasColumnType("bigint");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("WorkItemId")
                         .HasColumnType("varchar(200)");
