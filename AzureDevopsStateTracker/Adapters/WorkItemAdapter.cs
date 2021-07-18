@@ -1,7 +1,6 @@
 ﻿using AzureDevopsStateTracker.DTOs;
 using AzureDevopsStateTracker.Entities;
 using AzureDevopsStateTracker.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -87,8 +86,8 @@ namespace AzureDevopsStateTracker.Adapters
             {
                 CreatedAt = workItemStatusTime.CreatedAt,
                 State = workItemStatusTime.State,
-                TotalTime = ToStringTime(new DateTime(workItemStatusTime.TotalTime).TimeOfDay),
-                TotalWorkedTime = ToStringTime(new DateTime(workItemStatusTime.TotalWorkedTime).TimeOfDay)
+                TotalTime = workItemStatusTime.TotalTimeText,
+                TotalWorkedTime = workItemStatusTime.TotalWorkedTimeText
             };
         }
 
@@ -105,23 +104,6 @@ namespace AzureDevopsStateTracker.Adapters
             return workItemStatusTimeDTO
                      .Where(w => w != null)
                      .ToList();
-        }
-
-        public string ToStringTime(TimeSpan timeSpan)
-        {
-            if (timeSpan.Days > 0)
-                return $@"{timeSpan:%d} Dia(s) {timeSpan:%h}h e {timeSpan:%m}min e {timeSpan:%s}s";
-
-            if (timeSpan.Hours > 0)
-                return $@"{timeSpan:%h}h e {timeSpan:%m}min e {timeSpan:%s}s";
-
-            if (timeSpan.Minutes > 0)
-                return $@"{timeSpan:%m}min e {timeSpan:%s}s";
-
-            if (timeSpan.Seconds > 0)
-                return $@"{timeSpan:%s}s";
-
-            return $@"{timeSpan:%hh}:{timeSpan:%mm}:{timeSpan:%ss}";
         }
     }
 }

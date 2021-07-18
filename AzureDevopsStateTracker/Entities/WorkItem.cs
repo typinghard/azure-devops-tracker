@@ -119,7 +119,7 @@ namespace AzureDevopsStateTracker.Entities
                     totalWorkedTime += data.CalculateTotalWorkedTime();
                 }
 
-                timesByStateList.Add(new TimeByState(Id, workItemChange.Key, totalTime.Ticks, totalWorkedTime.Ticks));
+                timesByStateList.Add(new TimeByState(Id, workItemChange.Key, totalTime, totalWorkedTime));
             }
 
             return timesByStateList;

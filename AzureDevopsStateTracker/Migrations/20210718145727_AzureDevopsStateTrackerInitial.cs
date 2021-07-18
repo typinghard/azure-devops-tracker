@@ -47,7 +47,9 @@ namespace AzureDevopsStateTracker.Migrations
                     WorkItemId = table.Column<string>(type: "varchar(200)", nullable: true),
                     State = table.Column<string>(type: "varchar(200)", nullable: true),
                     TotalTime = table.Column<long>(nullable: false),
-                    TotalWorkedTime = table.Column<long>(nullable: false)
+                    TotalTimeText = table.Column<string>(type: "varchar(200)", nullable: true),
+                    TotalWorkedTime = table.Column<long>(nullable: false),
+                    TotalWorkedTimeText = table.Column<string>(type: "varchar(200)", nullable: true)
                 },
                 constraints: table =>
                 {
