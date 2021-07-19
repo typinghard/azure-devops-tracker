@@ -7,10 +7,8 @@ namespace AzureDevopsStateTracker.Entities
     {
         public string WorkItemId { get; private set; }
         public string State { get; private set; }
-        public long TotalTime { get; private set; }
-        public string TotalTimeText { get; private set; }
-        public long TotalWorkedTime { get; private set; }
-        public string TotalWorkedTimeText { get; private set; }
+        public double TotalTime { get; private set; }
+        public double TotalWorkedTime { get; private set; }
 
         public WorkItem WorkItem { get; private set; }
 
@@ -20,10 +18,8 @@ namespace AzureDevopsStateTracker.Entities
         {
             WorkItemId = workItemId;
             State = state;
-            TotalTime = totalTime.Ticks;
-            TotalTimeText = totalTime.ToTextTime();
-            TotalWorkedTime = totalWorkedTime.Ticks;
-            TotalWorkedTimeText = totalWorkedTime.ToTextTime();
+            TotalTime = totalTime.TotalSeconds;
+            TotalWorkedTime = totalWorkedTime.TotalSeconds;
 
             Validate();
         }

@@ -32,17 +32,11 @@ namespace AzureDevopsStateTracker.Migrations
                     b.Property<string>("State")
                         .HasColumnType("varchar(200)");
 
-                    b.Property<long>("TotalTime")
-                        .HasColumnType("bigint");
+                    b.Property<double>("TotalTime")
+                        .HasColumnType("float");
 
-                    b.Property<string>("TotalTimeText")
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<long>("TotalWorkedTime")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("TotalWorkedTimeText")
-                        .HasColumnType("varchar(200)");
+                    b.Property<double>("TotalWorkedTime")
+                        .HasColumnType("float");
 
                     b.Property<string>("WorkItemId")
                         .HasColumnType("varchar(200)");

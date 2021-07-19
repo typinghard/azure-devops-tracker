@@ -86,8 +86,8 @@ namespace AzureDevopsStateTracker.Adapters
             {
                 CreatedAt = workItemStatusTime.CreatedAt,
                 State = workItemStatusTime.State,
-                TotalTime = workItemStatusTime.TotalTimeText,
-                TotalWorkedTime = workItemStatusTime.TotalWorkedTimeText
+                //TotalTime = workItemStatusTime.TotalTimeText,
+                //TotalWorkedTime = workItemStatusTime.TotalWorkedTimeText
             };
         }
 
