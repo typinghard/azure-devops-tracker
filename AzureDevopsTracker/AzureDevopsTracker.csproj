@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>AzureDevOpsTracker</PackageId>
+    <Authors>Elvis Souza | Diego Galante</Authors>
+    <Company>TypingHard</Company>
+    <Product>Azure DevOps Tracker</Product>
+    <PackageLicenseExpression></PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/typinghard/azure-devops-state-tracker</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/typinghard/azure-devops-state-tracker</RepositoryUrl>
+    <PackageIcon>adst_icon.png</PackageIcon>
+    <PackageIconUrl />
+    <RepositoryType>GitHub</RepositoryType>
+    <PackageTags>Azure DevOps Tracker Columns State Tracking Track Board Scrum Kanbam Time Column Timing Workitem Worked Hours Team Performance</PackageTags>
+    <NeutralLanguage>en</NeutralLanguage>
+    <PackageLicenseFile>LICENSE.md.txt</PackageLicenseFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="LICENSE.md.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>
