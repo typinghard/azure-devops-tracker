@@ -13,7 +13,7 @@ namespace AzureDevopsTracker.Services
 {
     public class AzureDevopsTrackerService : IAzureDevopsTrackerService
     {
-        internal readonly IWorkItemRepository _workItemRepository;
+        public readonly IWorkItemRepository _workItemRepository;
         public readonly IWorkItemAdapter _workItemAdapter;
 
         public AzureDevopsTrackerService(
