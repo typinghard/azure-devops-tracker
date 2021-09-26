@@ -10,7 +10,7 @@ namespace AzureDevopsTracker.Data
 {
     internal class WorkItemRepository : Repository<WorkItem>, IWorkItemRepository
     {
-        public WorkItemRepository(AzureDevopsStateTrackerContext context) : base(context) { }
+        public WorkItemRepository(AzureDevopsTrackerContext context) : base(context) { }
 
         public async Task<WorkItem> GetByWorkItemId(string workItemId)
         {

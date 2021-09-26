@@ -11,12 +11,12 @@ using System.Threading.Tasks;
 
 namespace AzureDevopsTracker.Services
 {
-    public class AzureDevopsStateTrackerService : IAzureDevopsStateTrackerService
+    public class AzureDevopsTrackerService : IAzureDevopsTrackerService
     {
-        public readonly IWorkItemRepository _workItemRepository;
+        internal readonly IWorkItemRepository _workItemRepository;
         public readonly IWorkItemAdapter _workItemAdapter;
 
-        public AzureDevopsStateTrackerService(
+        public AzureDevopsTrackerService(
             IWorkItemAdapter workItemAdapter, IWorkItemRepository workItemRepository)
         {
             _workItemAdapter = workItemAdapter;
@@ -103,7 +103,10 @@ namespace AzureDevopsTracker.Services
         }
 
         #region Support Methods
-        public WorkItemChange ToWorkItemChange(string workItemId, string changedBy, string iterationPath, DateTime newDate, string newState, string oldState = null, DateTime? oldDate = null)
+        public WorkItemChange ToWorkItemChange(
+            string workItemId, string changedBy,
+            string iterationPath, DateTime newDate, string newState,
+            string oldState = null, DateTime? oldDate = null)
         {
             return new WorkItemChange(workItemId, changedBy.ExtractEmail(), iterationPath, newDate, newState, oldState, oldDate);
         }

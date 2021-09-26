@@ -25,7 +25,7 @@ namespace AzureDevopsTracker.Extensions
         public static string ToTextTime(this TimeSpan timeSpan)
         {
             if (timeSpan.Days > 0)
-                return $@"{timeSpan:%d} Dia(s) {timeSpan:%h} h e {timeSpan:%m} min e {timeSpan:%s} s";
+                return $@"{timeSpan:%d} Day(s) {timeSpan:%h} h e {timeSpan:%m} min e {timeSpan:%s} s";
 
             if (timeSpan.Hours > 0)
                 return $@"{timeSpan:%h} h e {timeSpan:%m} min e {timeSpan:%s} s";

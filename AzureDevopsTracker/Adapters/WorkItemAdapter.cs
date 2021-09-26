@@ -1,6 +1,8 @@
 ﻿using AzureDevopsTracker.DTOs;
 using AzureDevopsTracker.Entities;
+using AzureDevopsTracker.Extensions;
 using AzureDevopsTracker.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -86,8 +88,8 @@ namespace AzureDevopsTracker.Adapters
             {
                 CreatedAt = workItemStatusTime.CreatedAt,
                 State = workItemStatusTime.State,
-                //TotalTime = workItemStatusTime.TotalTimeText,
-                //TotalWorkedTime = workItemStatusTime.TotalWorkedTimeText
+                TotalTime = TimeSpan.FromSeconds(workItemStatusTime.TotalTime).ToTextTime(),
+                TotalWorkedTime = TimeSpan.FromSeconds(workItemStatusTime.TotalWorkedTime).ToTextTime()
             };
         }
 
