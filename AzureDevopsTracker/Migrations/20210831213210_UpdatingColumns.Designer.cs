@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AzureDevopsTracker.Migrations
 {
-    [DbContext(typeof(AzureDevopsStateTrackerContext))]
+    [DbContext(typeof(AzureDevopsTrackerContext))]
     [Migration("20210831213210_UpdatingColumns")]
     partial class UpdatingColumns
     {

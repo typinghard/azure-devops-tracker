@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace AzureDevopsTracker.Interfaces
 {
-    public interface IAzureDevopsStateTrackerService
+    public interface IAzureDevopsTrackerService
     {
         Task Create(CreateWorkItemDTO createDto, bool addWorkItemChange = true);
         Task Update(UpdatedWorkItemDTO updateDto);

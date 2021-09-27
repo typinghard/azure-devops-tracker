@@ -13,22 +13,22 @@ namespace AzureDevopsTracker.Configurations
 {
     public static class Configuration
     {
-        public static IServiceCollection AddAzureDevopsStateTracker(this IServiceCollection services, DataBaseConfig configurations)
+        public static IServiceCollection AddAzureDevopsTracker(this IServiceCollection services, DataBaseConfig configurations)
         {
-            services.AddDbContext<AzureDevopsStateTrackerContext>(options =>
+            services.AddDbContext<AzureDevopsTrackerContext>(options =>
                     options.UseSqlServer(DataBaseConfig.ConnectionsString));
 
-            services.AddScoped<AzureDevopsStateTrackerContext>();
+            services.AddScoped<AzureDevopsTrackerContext>();
             services.AddScoped<IWorkItemAdapter, WorkItemAdapter>();
             services.AddScoped<IWorkItemRepository, WorkItemRepository>();
-            services.AddScoped<IAzureDevopsStateTrackerService, AzureDevopsStateTrackerService>();
+            services.AddScoped<IAzureDevopsTrackerService, AzureDevopsTrackerService>();
 
             return services;
         }
 
-        public static IApplicationBuilder UseAzureDevopsStateTracker(this IApplicationBuilder app, IServiceProvider serviceProvider)
+        public static IApplicationBuilder UseAzureDevopsTracker(this IApplicationBuilder app, IServiceProvider serviceProvider)
         {
-            var context = serviceProvider.GetService<AzureDevopsStateTrackerContext>();
+            var context = serviceProvider.GetService<AzureDevopsTrackerContext>();
             context.Database.Migrate();
 
             return app;

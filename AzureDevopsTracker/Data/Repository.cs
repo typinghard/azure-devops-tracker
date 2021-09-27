@@ -10,10 +10,10 @@ namespace AzureDevopsTracker.Data
 {
     internal abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
     {
-        protected readonly AzureDevopsStateTrackerContext Db;
+        protected readonly AzureDevopsTrackerContext Db;
         protected readonly DbSet<TEntity> DbSet;
 
-        public Repository(AzureDevopsStateTrackerContext db)
+        public Repository(AzureDevopsTrackerContext db)
         {
             Db = db;
             DbSet = db.Set<TEntity>();

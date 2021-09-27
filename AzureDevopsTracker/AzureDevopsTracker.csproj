@@ -8,22 +8,30 @@
     <Company>TypingHard</Company>
     <Product>Azure DevOps Tracker</Product>
     <PackageLicenseExpression></PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/typinghard/azure-devops-state-tracker</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/typinghard/azure-devops-state-tracker</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/typinghard/azure-devops-tracker</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/typinghard/azure-devops-tracker</RepositoryUrl>
     <PackageIcon>adst_icon.png</PackageIcon>
     <PackageIconUrl />
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>Azure DevOps Tracker Columns State Tracking Track Board Scrum Kanbam Time Column Timing Workitem Worked Hours Team Performance</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
     <PackageLicenseFile>LICENSE.md.txt</PackageLicenseFile>
+    <Description>A NuGet that allows you to use a Azure DevOps Service Hook to track workitems changes in a simply and detailed way.</Description>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="1.1.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\..\..\..\..\..\..\Downloads\adst_icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
     <None Include="LICENSE.md.txt">
       <Pack>True</Pack>
       <PackagePath></PackagePath>

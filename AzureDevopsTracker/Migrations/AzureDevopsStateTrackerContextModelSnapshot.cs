@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AzureDevopsTracker.Migrations
 {
-    [DbContext(typeof(AzureDevopsStateTrackerContext))]
+    [DbContext(typeof(AzureDevopsTrackerContext))]
     partial class AzureDevopsStateTrackerContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

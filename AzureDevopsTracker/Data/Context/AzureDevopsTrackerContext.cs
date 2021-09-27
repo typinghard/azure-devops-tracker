@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace AzureDevopsTracker.Data.Context
 {
-    public class AzureDevopsStateTrackerContext : DbContext, IDisposable
+    public class AzureDevopsTrackerContext : DbContext, IDisposable
     {
-        public AzureDevopsStateTrackerContext(DbContextOptions options) : base(options)
+        public AzureDevopsTrackerContext(DbContextOptions options) : base(options)
         { }
 
         public DbSet<WorkItem> WorkItems { get; set; }
