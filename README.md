@@ -1,5 +1,7 @@
 # Azure DevOps Tracker
 
+[![Build status](https://ci.appveyor.com/api/projects/status/13v7nidttpa0d5x3/branch/main?svg=true)](https://ci.appveyor.com/project/DiegoGalante/azure-devops-tracker/branch/main)
+
 For a Technology Team Manager, the process improvement in search of agility and productivity is indispensable. For that, data is very important.
 
 
