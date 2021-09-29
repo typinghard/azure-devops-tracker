@@ -1,8 +1,10 @@
-image: Visual Studio 2019
+version: 1.0.{build}
+
+branches:
+  only:
+  - main
+
+configuration: Release
 
 before_build:
-- nuget restore ./AzureDevopsTracker/AzureDevopsTracker.sln
-
-build:
-  project: ./AzureDevopsTracker/AzureDevopsTracker.sln
-  verbosity: minimal
+- cmd: nuget restore ./AzureDevopsTracker/AzureDevopsTracker.sln
