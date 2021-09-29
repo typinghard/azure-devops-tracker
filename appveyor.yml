@@ -2,12 +2,6 @@ version: 1.0.{build}
 branches:
   only:
   - main
-
 configuration: Release
-
 before_build:
-  - nuget restore
-
-build:
-  verbosity: minimal
-  publish_wap: true
+- cmd: nuget restore ./AzureDevopsStateTracker/AzureDevopsStateTracker.sln
