@@ -1,7 +1,7 @@
 image: Visual Studio 2019
 
 before_build:
-- nuget restore
+- nuget restore ./AzureDevopsTracker/AzureDevopsTracker.sln
 
 build:
   project: ./AzureDevopsTracker/AzureDevopsTracker.sln
