@@ -1,6 +1,7 @@
 # Azure DevOps Tracker
 
-![Nuget](https://img.shields.io/nuget/v/AzureDevOpsTracker)
+[![Nuget](https://img.shields.io/nuget/v/AzureDevOpsTracker)](https://www.nuget.org/packages/AzureDevOpsTracker/)
+
 
 
 For a Technology Team Manager, the process improvement in search of agility and productivity is indispensable. For that, data is very important.
