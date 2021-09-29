@@ -36,7 +36,7 @@ The **Azure DevOps Tracker** brings automatically tracking of Workitems and will
 
 # Installation
 ```c#
-PM > Install-Package AzureDevOpsTracker -Version 1.0.0
+PM > Install-Package AzureDevOpsTracker -Version 1.0.1
 ``` 
 For more instructions and examples, go to our [Wiki](https://github.com/typinghard/azure-devops-tracker/wiki). 
  - [English](https://github.com/typinghard/azure-devops-tracker/wiki/English) 🇺🇸
