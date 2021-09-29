@@ -4,4 +4,4 @@ branches:
   - main
 configuration: Release
 before_build:
-- cmd: nuget restore ./AzureDevopsStateTracker/AzureDevopsStateTracker.sln
+- cmd: nuget restore ./AzureDevopsTracker/AzureDevopsTracker.sln
