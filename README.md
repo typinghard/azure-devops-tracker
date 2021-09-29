@@ -1,5 +1,9 @@
 # Azure DevOps Tracker
 
+[![Build status](https://ci.appveyor.com/api/projects/status/13v7nidttpa0d5x3/branch/main?svg=true)](https://ci.appveyor.com/project/DiegoGalante/azure-devops-tracker/branch/main)
+![Nuget](https://img.shields.io/nuget/v/AzureDevOpsTracker)
+
+
 For a Technology Team Manager, the process improvement in search of agility and productivity is indispensable. For that, data is very important.
 
 
@@ -32,7 +36,7 @@ The **Azure DevOps Tracker** brings automatically tracking of Workitems and will
 
 # Installation
 ```c#
-PM > Install-Package AzureDevOpsTracker -Version 1.0.0
+PM > Install-Package AzureDevOpsTracker -Version 1.0.1
 ``` 
 For more instructions and examples, go to our [Wiki](https://github.com/typinghard/azure-devops-tracker/wiki). 
  - [English](https://github.com/typinghard/azure-devops-tracker/wiki/English) 🇺🇸
