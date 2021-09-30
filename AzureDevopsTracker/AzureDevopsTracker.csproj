@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageId>AzureDevOpsTracker</PackageId>
     <Authors>Elvis Souza | Diego Galante</Authors>
     <Company>TypingHard</Company>
