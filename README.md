@@ -42,6 +42,15 @@ PM > Install-Package AzureDevOpsTracker -Version 1.0.1
 For more instructions and examples, go to our [Wiki](https://github.com/typinghard/azure-devops-tracker/wiki). 
  - [English](https://github.com/typinghard/azure-devops-tracker/wiki/English) 🇺🇸
  - [Português](https://github.com/typinghard/azure-devops-tracker/wiki/Português) 🇧🇷
+
+# Live Demo
+We have a DataBase with a public user to help you test the Azure DevOps Tracker in fully working!
+
+- Server: tcp:sql-azure-devops-tracker.database.windows.net,1433
+- Database: sqldb-azure-devops-tracker
+- User: public_user
+- Password: @Adt123456_
+
 # Authors
 
 * [Elvis Souza](https://www.linkedin.com/in/elvissouza/)
