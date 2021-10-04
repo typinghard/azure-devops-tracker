@@ -51,6 +51,9 @@ We have a DataBase with a public user to help you test the Azure DevOps Tracker 
 - User: public_user
 - Password: @Adt123456_
 
+Azure DevOps project link that is connected to this database:
+[Azure Devops - TypingHard](https://dev.azure.com/TypingHard/Typing%20Hard%20Project)
+
 # Authors
 
 * [Elvis Souza](https://www.linkedin.com/in/elvissouza/)
