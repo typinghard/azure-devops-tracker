@@ -2,6 +2,7 @@
 
 [![Build status](https://dev.azure.com/TypingHard/Typing%20Hard%20Project/_apis/build/status/typinghard.azure-devops-tracker)](https://dev.azure.com/TypingHard/Typing%20Hard%20Project/_build/latest?definitionId=6)
 [![Nuget](https://img.shields.io/nuget/v/AzureDevOpsTracker)](https://www.nuget.org/packages/AzureDevOpsTracker/)
+[![Downloads](https://img.shields.io/nuget/dt/AzureDevOpsTracker)](https://www.nuget.org/packages/AzureDevOpsTracker/)
 
 
 
