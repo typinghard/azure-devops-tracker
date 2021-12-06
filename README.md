@@ -1,9 +1,14 @@
 # Azure DevOps Tracker
 
+
 [![Build status](https://dev.azure.com/TypingHard/Typing%20Hard%20Project/_apis/build/status/typinghard.azure-devops-tracker)](https://dev.azure.com/TypingHard/Typing%20Hard%20Project/_build/latest?definitionId=6)
 [![Nuget](https://img.shields.io/nuget/v/AzureDevOpsTracker)](https://www.nuget.org/packages/AzureDevOpsTracker/)
+[![Downloads](https://img.shields.io/nuget/dt/AzureDevOpsTracker)](https://www.nuget.org/packages/AzureDevOpsTracker/)
 
 
+**To Talk with us, join our Discord
+<br/>
+[![Discord](https://img.shields.io/discord/901427875301974026?color=%235865f2&label=Join%20Typing%20Hard)](https://discord.gg/pbBNfNAYTH)**
 
 For a Technology Team Manager, the process improvement in search of agility and productivity is indispensable. For that, data is very important.
 
@@ -42,6 +47,18 @@ PM > Install-Package AzureDevOpsTracker -Version 1.0.1
 For more instructions and examples, go to our [Wiki](https://github.com/typinghard/azure-devops-tracker/wiki). 
  - [English](https://github.com/typinghard/azure-devops-tracker/wiki/English) 🇺🇸
  - [Português](https://github.com/typinghard/azure-devops-tracker/wiki/Português) 🇧🇷
+
+# Live Demo
+We have a DataBase with a public user to help you test the Azure DevOps Tracker in fully working!
+
+- Server: tcp:sql-azure-devops-tracker.database.windows.net,1433
+- Database: sqldb-azure-devops-tracker
+- User: public_user
+- Password: @Adt123456_
+
+Azure DevOps project link that is connected to this database:
+[Azure Devops - TypingHard](https://dev.azure.com/TypingHard/Typing%20Hard%20Project)
+
 # Authors
 
 * [Elvis Souza](https://www.linkedin.com/in/elvissouza/)
