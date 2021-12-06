@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <PackageId>AzureDevOpsTracker</PackageId>
     <Authors>Elvis Souza | Diego Galante</Authors>
     <Company>TypingHard</Company>
@@ -10,16 +10,17 @@
     <PackageLicenseExpression></PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/typinghard/azure-devops-tracker</PackageProjectUrl>
     <RepositoryUrl>https://github.com/typinghard/azure-devops-tracker</RepositoryUrl>
-    <PackageIcon>adst_icon.png</PackageIcon>
+    <PackageIcon>adt_icon.png</PackageIcon>
     <PackageIconUrl />
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>Azure DevOps Tracker Columns State Tracking Track Board Scrum Kanbam Time Column Timing Workitem Worked Hours Team Performance</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
     <PackageLicenseFile>LICENSE.md.txt</PackageLicenseFile>
     <Description>A NuGet that allows you to use a Azure DevOps Service Hook to track workitems changes in a simply and detailed way.</Description>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
-    <Version>1.0.1</Version>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
+    <Version>1.1.0-alpha</Version>
+    <PackageReleaseNotes>Add ChangeLog Feature</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,11 +29,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\..\..\..\..\..\Downloads\adst_icon.png">
+    <None Include="LICENSE.md.txt">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
-    <None Include="LICENSE.md.txt">
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="adt_icon.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
