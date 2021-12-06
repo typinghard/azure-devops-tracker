@@ -22,6 +22,9 @@ namespace AzureDevopsTracker.Entities
         public string Activity { get; private set; }
         public string Lancado { get; private set; }
 
+        public string ChangeLogItemId { get; private set; }
+        public ChangeLogItem ChangeLogItem { get; private set; }
+
         private readonly List<WorkItemChange> _workItemsChanges;
         public IReadOnlyCollection<WorkItemChange> WorkItemsChanges => _workItemsChanges;
 
@@ -104,6 +107,15 @@ namespace AzureDevopsTracker.Entities
         public void ClearTimesByState()
         {
             _timeByState.Clear();
+        }
+
+        public void VinculateChangeLogItem(ChangeLogItem changeLogItem)
+        {
+            if (ChangeLogItem == null)
+                throw new Exception("ChangeLogItem is null");
+
+            ChangeLogItemId = changeLogItem.Id;
+            ChangeLogItem = changeLogItem;
         }
 
         public IEnumerable<TimeByState> CalculateTotalTimeByState()

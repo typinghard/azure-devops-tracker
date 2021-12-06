@@ -13,6 +13,8 @@ namespace AzureDevopsTracker.Data.Context
         public DbSet<WorkItem> WorkItems { get; set; }
         public DbSet<WorkItemChange> WorkItemsChange { get; set; }
         public DbSet<TimeByState> TimeByStates { get; set; }
+        public DbSet<ChangeLogItem> ChangeLogItems { get; set; }
+        public DbSet<ChangeLog> ChangeLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

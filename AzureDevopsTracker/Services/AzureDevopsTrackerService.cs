@@ -45,6 +45,8 @@ namespace AzureDevopsTracker.Services
             if (addWorkItemChange)
                 AddWorkItemChange(workItem, create);
 
+            CheckWorkItemAvailableToChangeLog(workItem, create.Resource.Fields);
+
             await _workItemRepository.Add(workItem);
             await _workItemRepository.SaveChangesAsync();
         }
@@ -88,6 +90,8 @@ namespace AzureDevopsTracker.Services
                             update.Resource.Revision.Fields.Lancado);
 
             AddWorkItemChange(workItem, update);
+
+            CheckWorkItemAvailableToChangeLog(workItem, update.Resource.Revision.Fields);
 
             _workItemRepository.Update(workItem);
             await _workItemRepository.SaveChangesAsync();
@@ -149,6 +153,18 @@ namespace AzureDevopsTracker.Services
         public void RemoveTimeByStateFromDataBase(WorkItem workItem)
         {
             _workItemRepository.RemoveAllTimeByState(workItem.TimeByStates.ToList());
+        }
+
+        public void CheckWorkItemAvailableToChangeLog(WorkItem workItem, Fields fields)
+        {
+            if (workItem.CurrentStatus == "Closed" &&
+               !fields.ChangeLogDescription.IsNullOrEmpty())
+                workItem.VinculateChangeLogItem(ToChangeLogItem(workItem, fields));
+        }
+
+        public ChangeLogItem ToChangeLogItem(WorkItem workItem, Fields fields)
+        {
+            return new ChangeLogItem(workItem.Id, workItem.Title, fields.ChangeLogDescription, workItem.Type);
         }
         #endregion
     }
