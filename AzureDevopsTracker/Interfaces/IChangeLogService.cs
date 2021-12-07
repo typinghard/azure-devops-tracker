@@ -2,6 +2,6 @@
 {
     public interface IChangeLogService
     {
-        
+        int CountItemsForRelease();
     }
 }

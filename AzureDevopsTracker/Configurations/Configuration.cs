@@ -21,7 +21,11 @@ namespace AzureDevopsTracker.Configurations
             services.AddScoped<AzureDevopsTrackerContext>();
             services.AddScoped<IWorkItemAdapter, WorkItemAdapter>();
             services.AddScoped<IWorkItemRepository, WorkItemRepository>();
+
             services.AddScoped<IAzureDevopsTrackerService, AzureDevopsTrackerService>();
+
+            services.AddScoped<IChangeLogService, ChangeLogService>();
+            services.AddScoped<IChangeLogItemRepository, ChangeLogItemRepository>();
 
             return services;
         }
