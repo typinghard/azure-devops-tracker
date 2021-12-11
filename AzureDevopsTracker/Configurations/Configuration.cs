@@ -1,6 +1,7 @@
 ﻿using AzureDevopsTracker.Adapters;
 using AzureDevopsTracker.Data;
 using AzureDevopsTracker.Data.Context;
+using AzureDevopsTracker.Integrations;
 using AzureDevopsTracker.Interfaces;
 using AzureDevopsTracker.Interfaces.Internals;
 using AzureDevopsTracker.Services;
@@ -13,10 +14,12 @@ namespace AzureDevopsTracker.Configurations
 {
     public static class Configuration
     {
-        public static IServiceCollection AddAzureDevopsTracker(this IServiceCollection services, DataBaseConfig configurations)
+        public static IServiceCollection AddAzureDevopsTracker(this IServiceCollection services, DataBaseConfig configurations, MessageConfig messageConfig = null)
         {
             services.AddDbContext<AzureDevopsTrackerContext>(options =>
                     options.UseSqlServer(DataBaseConfig.ConnectionsString));
+
+            services.AddMessageIntegrations();
 
             services.AddScoped<AzureDevopsTrackerContext>();
             services.AddScoped<IWorkItemAdapter, WorkItemAdapter>();
@@ -26,6 +29,19 @@ namespace AzureDevopsTracker.Configurations
 
             services.AddScoped<IChangeLogService, ChangeLogService>();
             services.AddScoped<IChangeLogItemRepository, ChangeLogItemRepository>();
+            services.AddScoped<IChangeLogRepository, ChangeLogRepository>();
+
+            return services;
+        }
+
+        private static IServiceCollection AddMessageIntegrations(this IServiceCollection services)
+        {
+            if (MessageConfig.Messenger == null) return services;
+
+            if(MessageConfig.Messenger == EMessengers.DISCORD)
+                services.AddScoped<MessageIntegration, DiscordIntegration>();
+            else
+                services.AddScoped<MessageIntegration, MicrosoftTeamsIntegration>();
 
             return services;
         }

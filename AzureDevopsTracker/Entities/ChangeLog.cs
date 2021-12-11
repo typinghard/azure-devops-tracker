@@ -7,6 +7,7 @@ namespace AzureDevopsTracker.Entities
     public class ChangeLog : Entity
     {
         public string Response { get; private set; }
+        public string Number { get { return $"{ CreatedAt:yyyyMMdd}.{ Revision }"; } }
         public int Revision { get; set; }
 
         private readonly List<ChangeLogItem> _changeLogItems = new List<ChangeLogItem>();
@@ -16,11 +17,6 @@ namespace AzureDevopsTracker.Entities
         public ChangeLog(int newRevision)
         {
             Revision = newRevision;
-        }
-
-        public void ReleaseItems()
-        {
-            _changeLogItems.ForEach(c => c.Release(Id));
         }
 
         public void SetResponse(string response)
@@ -41,16 +37,19 @@ namespace AzureDevopsTracker.Entities
             if (CheckChangeLogItem(changeLogItem))
                 return;
 
+            changeLogItem.Release(Id);
             _changeLogItems.Add(changeLogItem);
         }
 
         public void AddChangeLogItems(IEnumerable<ChangeLogItem> changeLogItems)
         {
             if (changeLogItems == null)
-                throw new Exception("WorkItemType is required");
+                throw new Exception("ChangeLogItems is required");
 
             foreach (var changeLogItem in changeLogItems)
+            {
                 AddChangeLogItem(changeLogItem);
+            }
         }
 
         private bool CheckChangeLogItem(ChangeLogItem changeLogItem)
