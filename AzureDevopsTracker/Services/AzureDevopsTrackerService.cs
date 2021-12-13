@@ -123,6 +123,9 @@ namespace AzureDevopsTracker.Services
                                                   create.Resource.Fields.CreatedDate.ToDateTimeFromTimeZoneInfo(),
                                                   create.Resource.Fields.State);
 
+            if (CheckWorkItemChangeExists(workItem, workItemChange))
+                return;
+
             workItem.AddWorkItemChange(workItemChange);
         }
 
@@ -136,6 +139,9 @@ namespace AzureDevopsTracker.Services
                                       update.Resource.Fields.State.NewValue,
                                       update.Resource.Fields.State.OldValue,
                                       update.Resource.Fields.StateChangeDate.OldValue.ToDateTimeFromTimeZoneInfo());
+
+            if (CheckWorkItemChangeExists(workItem, workItemChange))
+                return;
 
             workItem.AddWorkItemChange(workItemChange);
 
@@ -157,9 +163,25 @@ namespace AzureDevopsTracker.Services
 
         public void CheckWorkItemAvailableToChangeLog(WorkItem workItem, Fields fields)
         {
-            if (workItem.CurrentStatus == "Closed" &&
-               !fields.ChangeLogDescription.IsNullOrEmpty())
+            if (workItem.CurrentStatus != "Closed" ||
+                fields.ChangeLogDescription.IsNullOrEmpty())
+                return;
+
+            if (workItem.ChangeLogItem == null)
                 workItem.VinculateChangeLogItem(ToChangeLogItem(workItem, fields));
+            else
+                workItem.ChangeLogItem.Update(workItem.Title, workItem.Type, fields.ChangeLogDescription);
+        }
+
+        public bool CheckWorkItemChangeExists(WorkItem workItem, WorkItemChange newWorkItemChange)
+        {
+            return workItem.WorkItemsChanges.Any(x => x.NewDate == newWorkItemChange.NewDate &&
+                                                      x.OldDate == newWorkItemChange.OldDate &&
+                                                      x.NewState == newWorkItemChange.NewState &&
+                                                      x.OldState == newWorkItemChange.OldState &&
+                                                      x.ChangedBy == newWorkItemChange.ChangedBy &&
+                                                      x.IterationPath == newWorkItemChange.IterationPath &&
+                                                      x.TotalWorkedTime == newWorkItemChange.TotalWorkedTime);
         }
 
         public ChangeLogItem ToChangeLogItem(WorkItem workItem, Fields fields)

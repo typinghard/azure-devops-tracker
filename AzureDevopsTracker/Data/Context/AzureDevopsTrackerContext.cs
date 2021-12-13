@@ -23,6 +23,8 @@ namespace AzureDevopsTracker.Data.Context
                 property.SetColumnType("varchar(200)");
 
             modelBuilder.HasDefaultSchema(DataBaseConfig.SchemaName);
+
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AzureDevopsTrackerContext).Assembly);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

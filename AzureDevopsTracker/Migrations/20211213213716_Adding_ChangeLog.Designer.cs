@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AzureDevopsTracker.Migrations
 {
     [DbContext(typeof(AzureDevopsTrackerContext))]
-    [Migration("20211206211800_Adding_ChangeLog")]
+    [Migration("20211213213716_Adding_ChangeLog")]
     partial class Adding_ChangeLog
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,7 +32,7 @@ namespace AzureDevopsTracker.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Response")
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("varchar(max)");
 
                     b.Property<int>("Revision")
                         .HasColumnType("int");
@@ -54,7 +54,7 @@ namespace AzureDevopsTracker.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("varchar(max)");
 
                     b.Property<string>("Title")
                         .HasColumnType("varchar(200)");
@@ -68,6 +68,10 @@ namespace AzureDevopsTracker.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ChangeLogId");
+
+                    b.HasIndex("WorkItemId")
+                        .IsUnique()
+                        .HasFilter("[WorkItemId] IS NOT NULL");
 
                     b.ToTable("ChangeLogItems");
                 });
@@ -113,12 +117,6 @@ namespace AzureDevopsTracker.Migrations
                     b.Property<string>("AssignedTo")
                         .HasColumnType("varchar(200)");
 
-                    b.Property<string>("ChangeLogItemId")
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<string>("ChangeLogItemId1")
-                        .HasColumnType("varchar(200)");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -156,8 +154,6 @@ namespace AzureDevopsTracker.Migrations
                         .HasColumnType("varchar(200)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ChangeLogItemId1");
 
                     b.ToTable("WorkItems");
                 });
@@ -206,6 +202,10 @@ namespace AzureDevopsTracker.Migrations
                     b.HasOne("AzureDevopsTracker.Entities.ChangeLog", "ChangeLog")
                         .WithMany("ChangeLogItems")
                         .HasForeignKey("ChangeLogId");
+
+                    b.HasOne("AzureDevopsTracker.Entities.WorkItem", null)
+                        .WithOne("ChangeLogItem")
+                        .HasForeignKey("AzureDevopsTracker.Entities.ChangeLogItem", "WorkItemId");
                 });
 
             modelBuilder.Entity("AzureDevopsTracker.Entities.TimeByState", b =>
@@ -213,13 +213,6 @@ namespace AzureDevopsTracker.Migrations
                     b.HasOne("AzureDevopsTracker.Entities.WorkItem", "WorkItem")
                         .WithMany("TimeByStates")
                         .HasForeignKey("WorkItemId");
-                });
-
-            modelBuilder.Entity("AzureDevopsTracker.Entities.WorkItem", b =>
-                {
-                    b.HasOne("AzureDevopsTracker.Entities.ChangeLogItem", "ChangeLogItem")
-                        .WithMany()
-                        .HasForeignKey("ChangeLogItemId1");
                 });
 
             modelBuilder.Entity("AzureDevopsTracker.Entities.WorkItemChange", b =>

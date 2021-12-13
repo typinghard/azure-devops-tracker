@@ -15,14 +15,21 @@ namespace AzureDevopsTracker.Entities
         public ChangeLog ChangeLog { get; private set; }
         private ChangeLogItem() { }
 
-        public ChangeLogItem(string workItemId, string title, string description, string workitemType)
+        public ChangeLogItem(string workItemId, string title, string description, string workItemType)
         {
             WorkItemId = workItemId;
             Title = title;
             Description = description;
-            WorkItemType = workitemType;
+            WorkItemType = workItemType;
 
             Validate();
+        }
+
+        public void Update(string title, string workItemType, string description)
+        {
+            Title = title;
+            WorkItemType = workItemType;
+            Description = description;
         }
 
         public void Release(string changeLogId)

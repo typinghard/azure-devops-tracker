@@ -22,7 +22,6 @@ namespace AzureDevopsTracker.Entities
         public string Activity { get; private set; }
         public string Lancado { get; private set; }
 
-        public string ChangeLogItemId { get; private set; }
         public ChangeLogItem ChangeLogItem { get; private set; }
 
         private readonly List<WorkItemChange> _workItemsChanges;
@@ -111,10 +110,9 @@ namespace AzureDevopsTracker.Entities
 
         public void VinculateChangeLogItem(ChangeLogItem changeLogItem)
         {
-            if (ChangeLogItem == null)
+            if (changeLogItem == null)
                 throw new Exception("ChangeLogItem is null");
 
-            ChangeLogItemId = changeLogItem.Id;
             ChangeLogItem = changeLogItem;
         }
 

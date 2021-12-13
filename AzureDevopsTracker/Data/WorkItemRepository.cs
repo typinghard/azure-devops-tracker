@@ -17,6 +17,7 @@ namespace AzureDevopsTracker.Data
             return await DbSet
                           .Include(x => x.WorkItemsChanges)
                           .Include(x => x.TimeByStates)
+                          .Include(x => x.ChangeLogItem)
                           .FirstOrDefaultAsync(x => x.Id == workItemId);
         }
 
@@ -25,6 +26,7 @@ namespace AzureDevopsTracker.Data
             return await DbSet
                           .Include(x => x.WorkItemsChanges)
                           .Include(x => x.TimeByStates)
+                          .Include(x => x.ChangeLogItem)
                           .Where(x => workItemsId.Contains(x.Id))
                           .ToListAsync();
         }
@@ -34,6 +36,7 @@ namespace AzureDevopsTracker.Data
             return await DbSet
                           .Include(x => x.WorkItemsChanges)
                           .Include(x => x.TimeByStates)
+                          .Include(x => x.ChangeLogItem)
                           .Where(x => x.IterationPath == iterationPath)
                           .ToListAsync();
         }
