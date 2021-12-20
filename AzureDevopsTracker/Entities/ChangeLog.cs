@@ -7,8 +7,8 @@ namespace AzureDevopsTracker.Entities
     public class ChangeLog : Entity
     {
         public string Response { get; private set; }
-        public string Number { get { return $"{ CreatedAt:yyyyMMdd}.{ Revision }"; } }
-        public int Revision { get; set; }
+        public string Number { get; private set; }
+        public int Revision { get; private set; }
 
         private readonly List<ChangeLogItem> _changeLogItems = new List<ChangeLogItem>();
         public IReadOnlyCollection<ChangeLogItem> ChangeLogItems => _changeLogItems;
@@ -17,6 +17,7 @@ namespace AzureDevopsTracker.Entities
         public ChangeLog(int newRevision)
         {
             Revision = newRevision;
+            Number = $"{ CreatedAt:yyyyMMdd}.{ Revision }";
         }
 
         public void SetResponse(string response)
