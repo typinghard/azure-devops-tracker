@@ -31,6 +31,8 @@ namespace AzureDevopsTracker.Configurations
             services.AddScoped<IChangeLogItemRepository, ChangeLogItemRepository>();
             services.AddScoped<IChangeLogRepository, ChangeLogRepository>();
 
+            services.AddLocalization(options => options.ResourcesPath = "Resources");
+
             return services;
         }
 
