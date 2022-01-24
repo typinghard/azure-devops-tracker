@@ -1,8 +1,10 @@
 ﻿using AzureDevopsTracker.Entities;
+using AzureDevopsTracker.Integrations;
 using AzureDevopsTracker.Interfaces;
 using AzureDevopsTracker.Interfaces.Internals;
+using AzureDevopsTracker.Statics;
+using Microsoft.Extensions.Configuration;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace AzureDevopsTracker.Services
 {
@@ -10,13 +12,19 @@ namespace AzureDevopsTracker.Services
     {
         private readonly IChangeLogItemRepository _changeLogItemRepository;
         private readonly IChangeLogRepository _changeLogRepository;
+        private readonly IConfiguration _configuration;
+        private readonly MessageIntegration _messageIntegration;
 
         public ChangeLogService(
             IChangeLogItemRepository changeLogItemRepository,
-            IChangeLogRepository changeLogRepository)
+            IChangeLogRepository changeLogRepository,
+            IConfiguration configuration, 
+            MessageIntegration messageIntegration)
         {
             _changeLogItemRepository = changeLogItemRepository;
             _changeLogRepository = changeLogRepository;
+            _configuration = configuration;
+            _messageIntegration = messageIntegration;
         }
 
         public int CountItemsForRelease()
@@ -29,10 +37,7 @@ namespace AzureDevopsTracker.Services
             var changeLogItems = _changeLogItemRepository.ListWaitingForRelease();
             if (!changeLogItems.Any()) return null;
 
-            var changeLogsQuantity = _changeLogRepository.CountChangeLogsCreatedToday();
-
-            var changeLog = new ChangeLog(changeLogsQuantity + 1);
-
+            var changeLog = CreateChangeLog();
             changeLog.AddChangeLogItems(changeLogItems);
 
             _changeLogRepository.Add(changeLog).Wait();
@@ -43,9 +48,19 @@ namespace AzureDevopsTracker.Services
 
         public string SendToMessengers(ChangeLog changeLog)
         {
-            //Chamar o Facade pra enviar pro Destination
+            _messageIntegration.Send(changeLog);
 
             return $"The ChangeLog { changeLog.Number } was released.";
+        }
+
+        private ChangeLog CreateChangeLog()
+        {
+            if (string.IsNullOrEmpty(_configuration[ConfigurationStatics.ADT_CHANGELOG_VERSION]))
+            {
+                var changeLogsQuantity = _changeLogRepository.CountChangeLogsCreatedToday();
+                return new ChangeLog(changeLogsQuantity + 1);
+            }
+            return new ChangeLog(_configuration[ConfigurationStatics.ADT_CHANGELOG_VERSION]);
         }
     }
 }

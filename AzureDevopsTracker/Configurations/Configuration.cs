@@ -31,20 +31,23 @@ namespace AzureDevopsTracker.Configurations
             services.AddScoped<IChangeLogItemRepository, ChangeLogItemRepository>();
             services.AddScoped<IChangeLogRepository, ChangeLogRepository>();
 
-            services.AddLocalization(options => options.ResourcesPath = "Resources");
-
             return services;
         }
 
         private static IServiceCollection AddMessageIntegrations(this IServiceCollection services)
         {
-            if (MessageConfig.Messenger == null) return services;
-
-            if(MessageConfig.Messenger == EMessengers.DISCORD)
-                services.AddScoped<MessageIntegration, DiscordIntegration>();
-            else
-                services.AddScoped<MessageIntegration, MicrosoftTeamsIntegration>();
-
+            switch (MessageConfig.Messenger)
+            {
+                case EMessengers.DISCORD:
+                    services.AddScoped<MessageIntegration, DiscordIntegration>();
+                    break;
+                case EMessengers.MICROSOFT_TEAMS:
+                    services.AddScoped<MessageIntegration, MicrosoftTeamsIntegration>();
+                    break;
+                default: 
+                    services.AddScoped<MessageIntegration, FakeIntegration>();
+                    break;
+            }
             return services;
         }
 

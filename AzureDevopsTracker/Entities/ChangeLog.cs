@@ -20,6 +20,11 @@ namespace AzureDevopsTracker.Entities
             Number = $"{ CreatedAt:yyyyMMdd}.{ Revision }";
         }
 
+        public ChangeLog(string number)
+        {
+            Number = number;
+        }
+
         public void SetResponse(string response)
         {
             Response = response;
