@@ -37,20 +37,18 @@ namespace AzureDevopsTracker.Integrations
 
         internal override void Send(ChangeLog changeLog)
         {
-            //Formatar o texto com o MicrosoftTeamsHelper
-
             var values = new MicrosoftTeamsMessage()
             {
                 type = MicrosoftTeamsStrings.Type,
                 context = MicrosoftTeamsStrings.Context,
                 themeColor = MicrosoftTeamsStrings.ThemeColor,
-                summary = GetTitle(changeLog),
+                summary = GetTitle(),
                 sections = new Section[1]
                 {
                     new Section()
                     {
-                        activityTitle = GetTitle(changeLog),
-                        activitySubtitle = $"Versão: { changeLog.Number }",
+                        activityTitle = GetTitle(),
+                        activitySubtitle = GetVersion(changeLog),
                         activityImage = GetAnnouncementImageUrl(),
                         text = GetText(changeLog),
                         markdown = true
@@ -58,11 +56,7 @@ namespace AzureDevopsTracker.Integrations
                 }
             };
 
-            var response = Notify(values);
-
-            //Seta o retorno no ChangeLog
-
-            //Retorna o ChangeLog
+            Notify(values);
         }
 
         private string GetText(ChangeLog changeLog)
@@ -103,7 +97,7 @@ namespace AzureDevopsTracker.Integrations
 
         private string GetFooter()
         {
-            return $"<br><sup> <img src='{ GetLogoTypingHard16x16Url() }' />{ GetNugetVersion() }</sup>";
+            return $"<br><sup> <img src='{ GetLogoTypingHard16x16Url() }' /> { GetNugetVersion() }</sup>";
         }
     }
 }

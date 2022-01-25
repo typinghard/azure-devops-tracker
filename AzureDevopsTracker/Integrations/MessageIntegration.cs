@@ -13,14 +13,14 @@ namespace AzureDevopsTracker.Integrations
         private static readonly string MEGAFONE_GIF = "megafone.gif";
         private static readonly string LOGO_TYPINGHARD_16X16 = "logo-typinghard-16x16.png";
 
-        protected internal string GetTitle(ChangeLog changeLog)
+        protected internal string GetTitle()
         {
             return $"Nova atualização da plataforma";
         }
 
         protected internal string GetVersion(ChangeLog changeLog)
         {
-            return $"Versao: { changeLog.Number}";
+            return $"Versão: {changeLog.Number}";
         }
 
         protected internal string GetAnnouncementImageUrl()
@@ -33,11 +33,16 @@ namespace AzureDevopsTracker.Integrations
             return $"{CDN_URL}{LOGO_TYPINGHARD_16X16}";
         }
 
-        protected internal string GetNugetVersion()
+        protected internal string GetFileVersion()
         {
             System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
             System.Diagnostics.FileVersionInfo fileVersionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(assembly.Location);
-            return $"Powered by **Typing Hard** • nuget version { fileVersionInfo.FileVersion }";
+            return fileVersionInfo.FileVersion;
+        }
+
+        protected internal string GetNugetVersion()
+        {
+            return $"Powered by **Typing Hard** • nuget version { GetFileVersion() }";
         }
 
         protected internal HttpResponseMessage Notify(object body)
