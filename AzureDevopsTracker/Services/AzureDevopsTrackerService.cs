@@ -169,7 +169,8 @@ namespace AzureDevopsTracker.Services
         {
             if (workItem.CurrentStatus != "Closed" &&
                 workItem.LastStatus == "Closed" &&
-                workItem.ChangeLogItem != null)
+                workItem.ChangeLogItem != null &&
+                !workItem.ChangeLogItem.WasReleased)
                 RemoveChangeLogItem(workItem);
 
             if (workItem.CurrentStatus != "Closed" ||
@@ -200,10 +201,10 @@ namespace AzureDevopsTracker.Services
 
         public void RemoveChangeLogItem(WorkItem workItem)
         {
-            var changeLotItem = _changeLogItemRepository.GetById(workItem.ChangeLogItem?.Id).Result;
-            if (changeLotItem != null)
+            var changeLogItem = _changeLogItemRepository.GetById(workItem.ChangeLogItem?.Id).Result;
+            if (changeLogItem != null)
             {
-                _changeLogItemRepository.Delete(changeLotItem);
+                _changeLogItemRepository.Delete(changeLogItem);
                 _changeLogItemRepository.SaveChangesAsync().Wait();
 
                 workItem.RemoveChangeLogItem();
