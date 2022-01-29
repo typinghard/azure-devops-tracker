@@ -28,22 +28,23 @@ namespace AzureDevopsTracker.Integrations
         }
 
 
-        internal static class MicrosoftTeamsStrings
+        internal static class MicrosoftTeamsStatics
         {
-            internal static string Type = "MessageCard";
-            internal static string Context = "http://schema.org/extensions";
-            internal static string ThemeColor = "7bd1d7";
+            internal static readonly string Type = "MessageCard";
+            internal static readonly string Context = "http://schema.org/extensions";
+            internal static readonly string ThemeColor = "7bd1d7";
+            internal static readonly int TEXT_SIZE_TO_BREAK_LINE = 100;
+            internal static readonly int OPENING_DIV_SIZE = 5;
+            internal static readonly int CLOSING_DIV_SIZE = 6;
         }
 
         internal override void Send(ChangeLog changeLog)
         {
-            //Formatar o texto com o MicrosoftTeamsHelper
-
             var values = new MicrosoftTeamsMessage()
             {
-                type = MicrosoftTeamsStrings.Type,
-                context = MicrosoftTeamsStrings.Context,
-                themeColor = MicrosoftTeamsStrings.ThemeColor,
+                type = MicrosoftTeamsStatics.Type,
+                context = MicrosoftTeamsStatics.Context,
+                themeColor = MicrosoftTeamsStatics.ThemeColor,
                 summary = GetTitle(changeLog),
                 sections = new Section[1]
                 {
@@ -58,11 +59,7 @@ namespace AzureDevopsTracker.Integrations
                 }
             };
 
-            var response = Notify(values);
-
-            //Seta o retorno no ChangeLog
-
-            //Retorna o ChangeLog
+            Notify(values);
         }
 
         private string GetText(ChangeLog changeLog)
@@ -98,7 +95,20 @@ namespace AzureDevopsTracker.Integrations
 
         private string GetWorkItemDescriptionLine(ChangeLogItem workItem)
         {
-            return $"<br><em>{ workItem.WorkItemId }</em> - { workItem.Description }";
+            var description = GetDescription(workItem.Description);
+            var descriptionLine = $"<em>**{ workItem.WorkItemId }**</em> - { description }";
+            if (description.Length > MicrosoftTeamsStatics.TEXT_SIZE_TO_BREAK_LINE)
+                return $"<br>{ descriptionLine }<br>";
+            return descriptionLine;
+        }
+
+        private string GetDescription(string description)
+        {
+            if (description.StartsWith("<div>"))
+                description = description[MicrosoftTeamsStatics.OPENING_DIV_SIZE..];
+            if(description.EndsWith("</div>"))
+                description = description[0..^MicrosoftTeamsStatics.CLOSING_DIV_SIZE];
+            return description;
         }
 
         private string GetFooter()
