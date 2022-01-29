@@ -30,6 +30,7 @@ namespace AzureDevopsTracker.Entities
         private readonly List<TimeByState> _timeByState;
         public IReadOnlyCollection<TimeByState> TimeByStates => _timeByState;
         public string CurrentStatus => _workItemsChanges?.OrderBy(x => x.CreatedAt)?.LastOrDefault()?.NewState;
+        public string LastStatus => _workItemsChanges?.OrderBy(x => x.CreatedAt)?.ToList()?.Skip(1)?.LastOrDefault()?.OldState;
 
         private WorkItem()
         {
@@ -106,6 +107,11 @@ namespace AzureDevopsTracker.Entities
         public void ClearTimesByState()
         {
             _timeByState.Clear();
+        }
+
+        public void RemoveChangeLogItem()
+        {
+            ChangeLogItem = null;
         }
 
         public void VinculateChangeLogItem(ChangeLogItem changeLogItem)
