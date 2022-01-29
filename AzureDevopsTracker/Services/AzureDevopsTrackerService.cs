@@ -15,12 +15,16 @@ namespace AzureDevopsTracker.Services
     {
         public readonly IWorkItemRepository _workItemRepository;
         public readonly IWorkItemAdapter _workItemAdapter;
+        public readonly IChangeLogItemRepository _changeLogItemRepository;
 
         public AzureDevopsTrackerService(
-            IWorkItemAdapter workItemAdapter, IWorkItemRepository workItemRepository)
+            IWorkItemAdapter workItemAdapter,
+            IWorkItemRepository workItemRepository,
+            IChangeLogItemRepository changeLogItemRepository)
         {
             _workItemAdapter = workItemAdapter;
             _workItemRepository = workItemRepository;
+            _changeLogItemRepository = changeLogItemRepository;
         }
 
         public async Task Create(CreateWorkItemDTO create, bool addWorkItemChange = true)
@@ -163,6 +167,12 @@ namespace AzureDevopsTracker.Services
 
         public void CheckWorkItemAvailableToChangeLog(WorkItem workItem, Fields fields)
         {
+            if (workItem.CurrentStatus != "Closed" &&
+                workItem.LastStatus == "Closed" &&
+                workItem.ChangeLogItem != null &&
+                !workItem.ChangeLogItem.WasReleased)
+                RemoveChangeLogItem(workItem);
+
             if (workItem.CurrentStatus != "Closed" ||
                 fields.ChangeLogDescription.IsNullOrEmpty())
                 return;
@@ -187,6 +197,18 @@ namespace AzureDevopsTracker.Services
         public ChangeLogItem ToChangeLogItem(WorkItem workItem, Fields fields)
         {
             return new ChangeLogItem(workItem.Id, workItem.Title, fields.ChangeLogDescription, workItem.Type);
+        }
+
+        public void RemoveChangeLogItem(WorkItem workItem)
+        {
+            var changeLogItem = _changeLogItemRepository.GetById(workItem.ChangeLogItem?.Id).Result;
+            if (changeLogItem != null)
+            {
+                _changeLogItemRepository.Delete(changeLogItem);
+                _changeLogItemRepository.SaveChangesAsync().Wait();
+
+                workItem.RemoveChangeLogItem();
+            }
         }
         #endregion
     }
