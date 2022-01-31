@@ -45,7 +45,7 @@ namespace AzureDevopsTracker.Integrations
                 type = MicrosoftTeamsStatics.Type,
                 context = MicrosoftTeamsStatics.Context,
                 themeColor = MicrosoftTeamsStatics.ThemeColor,
-                summary = GetTitle(changeLog),
+                summary = GetTitle(),
                 sections = new Section[1]
                 {
                     new Section()
@@ -83,12 +83,12 @@ namespace AzureDevopsTracker.Integrations
             text.AppendLine("\n");
 
             text.Append($"\n  # **{ sectionName }**\n");
+            text.Append("<br>");
             foreach (var workItem in changeLogItems)
             {
                 text.Append(GetWorkItemDescriptionLine(workItem));
             }
 
-            text.Append("<br>");
             text.AppendLine("\n");
             return text.ToString();
         }
@@ -96,7 +96,7 @@ namespace AzureDevopsTracker.Integrations
         private string GetWorkItemDescriptionLine(ChangeLogItem workItem)
         {
             var description = GetDescription(workItem.Description);
-            var descriptionLine = $"<em>**{ workItem.WorkItemId }**</em> - { description }";
+            var descriptionLine = $"<em>**{ workItem.WorkItemId }**</em> - { description } <br>";
             if (description.Length > MicrosoftTeamsStatics.TEXT_SIZE_TO_BREAK_LINE)
                 return $"<br>{ descriptionLine }<br>";
             return descriptionLine;
@@ -106,7 +106,7 @@ namespace AzureDevopsTracker.Integrations
         {
             if (description.StartsWith("<div>"))
                 description = description[MicrosoftTeamsStatics.OPENING_DIV_SIZE..];
-            if(description.EndsWith("</div>"))
+            if (description.EndsWith("</div>"))
                 description = description[0..^MicrosoftTeamsStatics.CLOSING_DIV_SIZE];
             return description;
         }
