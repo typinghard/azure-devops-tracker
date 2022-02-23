@@ -36,6 +36,8 @@ The **Azure DevOps Tracker** brings automatically tracking of Workitems and will
   
   ✅ A Project
 
+ ### - Changelog: With Azure DevOps Tracker you can easily inform what was done by your team. Actually, we have integration with Microsoft Teams and Discord!
+
  ### Possibility to connect to a BI Tool 📊
  ### Your creativity is the limit! 🚀
 
