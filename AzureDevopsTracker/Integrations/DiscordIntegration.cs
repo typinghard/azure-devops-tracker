@@ -1,4 +1,6 @@
 ﻿using AzureDevopsTracker.Entities;
+using AzureDevopsTracker.Helpers;
+using AzureDevopsTracker.Statics;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -101,11 +103,14 @@ namespace AzureDevopsTracker.Integrations
 
             var listFields = new List<Field>();
 
-            var features = changeLogItemsAgrupado.Where(x => !x.Key.Equals("bug")).SelectMany(x => x).Select(x => x).ToList();
-            var bugFixes = changeLogItemsAgrupado.Where(x => x.Key.Equals("bug")).SelectMany(x => x).Select(x => x).ToList();
+            var features = changeLogItemsAgrupado.Where(x => !x.Key.Equals(WorkItemStatics.WORKITEM_TYPE_BUG)).SelectMany(x => x).Select(x => x).ToList();
+            var bugFixes = changeLogItemsAgrupado.Where(x => x.Key.Equals(WorkItemStatics.WORKITEM_TYPE_BUG)).SelectMany(x => x).Select(x => x).ToList();
 
-            listFields.Add(new Field() { Name = "Atualizações", Value = string.Join("\n", features.Select(d => string.Format(" {0} -   {1}.", d.WorkItemId, d.Description))), IsInline = false });
-            listFields.Add(new Field() { Name = "Correções", Value = string.Join("\n", bugFixes.Select(d => string.Format(" {0} -   {1}.", d.WorkItemId, d.Description))), IsInline = false });
+            if (features.Any())
+                listFields.Add(new Field() { Name = "Atualizações", Value = string.Join("\n", features.Select(d => string.Format("\n{0} -   {1}", d.WorkItemId, d.Description.HtmlToRawText()))), IsInline = false });
+
+            if (bugFixes.Any())
+                listFields.Add(new Field() { Name = "Correções", Value = string.Join("\n", bugFixes.Select(d => string.Format("\n{0} -   {1}", d.WorkItemId, d.Description.HtmlToRawText()))), IsInline = false });
 
             return listFields;
         }
