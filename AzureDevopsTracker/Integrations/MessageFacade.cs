@@ -19,7 +19,7 @@ namespace AzureDevopsTracker.Integrations
             using var scope = _serviceScopeFactory.CreateScope();
 
             var messageIntegration = scope.ServiceProvider.GetService<MessageIntegration>();
-            if (messageIntegration == null) throw new Exception("Configure the MessageConfig in Startup to send changelog messages");
+            if (messageIntegration is null) throw new Exception("Configure the MessageConfig in Startup to send changelog messages");
 
             messageIntegration.Send(changeLog);
         }

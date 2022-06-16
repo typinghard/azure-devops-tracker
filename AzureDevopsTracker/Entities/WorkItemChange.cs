@@ -40,7 +40,7 @@ namespace AzureDevopsTracker.Entities
 
         public TimeSpan CalculateTotalTime()
         {
-            return OldDate == null ? TimeSpan.Zero : NewDate.ToDateTimeFromTimeZoneInfo() - OldDate.Value.ToDateTimeFromTimeZoneInfo();
+            return OldDate is null ? TimeSpan.Zero : NewDate.ToDateTimeFromTimeZoneInfo() - OldDate.Value.ToDateTimeFromTimeZoneInfo();
         }
 
         public double CalculateTotalWorkedTime()

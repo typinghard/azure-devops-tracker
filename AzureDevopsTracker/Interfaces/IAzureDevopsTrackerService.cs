@@ -10,5 +10,8 @@ namespace AzureDevopsTracker.Interfaces
         Task Create(CreateWorkItemDTO createDto, bool addWorkItemChange = true);
         Task Update(UpdatedWorkItemDTO updateDto);
         Task<WorkItemDTO> GetByWorkItemId(string workItemId);
+
+        Task Create(string jsonText, bool addWorkItemChange = true);
+        Task Update(string jsonText);
     }
 }

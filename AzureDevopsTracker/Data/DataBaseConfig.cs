@@ -11,7 +11,7 @@ namespace AzureDevopsTracker.Data
             if (connectionsString.IsNullOrEmpty())
                 throw new ArgumentException("The ConnectionsString is required");
 
-            if (timeZoneInfo == null)
+            if (timeZoneInfo is null)
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time");
                 else

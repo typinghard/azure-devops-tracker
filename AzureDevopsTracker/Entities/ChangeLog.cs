@@ -37,7 +37,7 @@ namespace AzureDevopsTracker.Entities
 
         public void AddChangeLogItem(ChangeLogItem changeLogItem)
         {
-            if (changeLogItem == null)
+            if (changeLogItem is null)
                 throw new Exception("ChangeLogItem is required");
 
             if (CheckChangeLogItem(changeLogItem))
@@ -49,7 +49,7 @@ namespace AzureDevopsTracker.Entities
 
         public void AddChangeLogItems(IEnumerable<ChangeLogItem> changeLogItems)
         {
-            if (changeLogItems == null)
+            if (changeLogItems is null)
                 throw new Exception("ChangeLogItems is required");
 
             foreach (var changeLogItem in changeLogItems)

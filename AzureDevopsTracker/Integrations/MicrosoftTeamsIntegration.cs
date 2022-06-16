@@ -64,7 +64,7 @@ namespace AzureDevopsTracker.Integrations
 
         private string GetText(ChangeLog changeLog)
         {
-            if (changeLog == null || !changeLog.ChangeLogItems.Any()) return string.Empty;
+            if (changeLog is null || !changeLog.ChangeLogItems.Any()) return string.Empty;
 
             StringBuilder text = new();
             text.AppendLine(GetWorkItemsDescriptionSection("Features", changeLog.ChangeLogItems.Where(x => x.WorkItemType != WorkItemStatics.WORKITEM_TYPE_BUG)));

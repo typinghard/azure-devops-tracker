@@ -3,6 +3,7 @@ using AzureDevopsTracker.DTOs.Create;
 using AzureDevopsTracker.DTOs.Update;
 using AzureDevopsTracker.Entities;
 using AzureDevopsTracker.Extensions;
+using AzureDevopsTracker.Helpers;
 using AzureDevopsTracker.Interfaces;
 using AzureDevopsTracker.Interfaces.Internals;
 using System;
@@ -169,7 +170,7 @@ namespace AzureDevopsTracker.Services
         {
             if (workItem.CurrentStatus != "Closed" &&
                 workItem.LastStatus == "Closed" &&
-                workItem.ChangeLogItem != null &&
+                workItem.ChangeLogItem is not null &&
                 !workItem.ChangeLogItem.WasReleased)
                 RemoveChangeLogItem(workItem);
 
@@ -177,7 +178,7 @@ namespace AzureDevopsTracker.Services
                 fields.ChangeLogDescription.IsNullOrEmpty())
                 return;
 
-            if (workItem.ChangeLogItem == null)
+            if (workItem.ChangeLogItem is null)
                 workItem.VinculateChangeLogItem(ToChangeLogItem(workItem, fields));
             else
                 workItem.ChangeLogItem.Update(workItem.Title, workItem.Type, fields.ChangeLogDescription);
@@ -202,12 +203,42 @@ namespace AzureDevopsTracker.Services
         public void RemoveChangeLogItem(WorkItem workItem)
         {
             var changeLogItem = _changeLogItemRepository.GetById(workItem.ChangeLogItem?.Id).Result;
-            if (changeLogItem != null)
+            if (changeLogItem is not null)
             {
                 _changeLogItemRepository.Delete(changeLogItem);
                 _changeLogItemRepository.SaveChangesAsync().Wait();
 
                 workItem.RemoveChangeLogItem();
+            }
+        }
+
+        public Task Create(string jsonText, bool addWorkItemChange = true)
+        {
+            throw new NotImplementedException();
+
+            try
+            {
+                ReadJsonHelper.ReadJson(jsonText);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public Task Update(string jsonText)
+        {
+            throw new NotImplementedException();
+
+            try
+            {
+
+            }
+            catch (Exception)
+            {
+
+                throw;
             }
         }
         #endregion
