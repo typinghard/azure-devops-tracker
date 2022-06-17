@@ -6,6 +6,7 @@ using AzureDevopsTracker.Extensions;
 using AzureDevopsTracker.Helpers;
 using AzureDevopsTracker.Interfaces;
 using AzureDevopsTracker.Interfaces.Internals;
+using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -212,19 +213,28 @@ namespace AzureDevopsTracker.Services
             }
         }
 
-        public Task Create(string jsonText, bool addWorkItemChange = true)
+        /*
+         * Still missing:
+         *  - Migration
+         *  - Update function
+         */
+        public async Task Create(string jsonText, bool addWorkItemChange = true)
         {
-            throw new NotImplementedException();
-
             try
             {
-                ReadJsonHelper.ReadJson(jsonText);
-            }
-            catch (Exception)
-            {
+                var workItemDTO = JsonConvert.DeserializeObject<CreateWorkItemDTO>(jsonText);
+                await Create(workItemDTO);
 
-                throw;
+                var workItem = await _workItemRepository.GetByWorkItemId(workItemDTO.Resource.Id);
+                if (workItem is null)
+                    return;
+
+                var customFields = ReadJsonHelper.ReadJson(workItem.Id, jsonText);
+                if (customFields is not null && customFields.Any())
+                    workItem.AddCustomFields(customFields);
             }
+            catch
+            { }
         }
 
         public Task Update(string jsonText)

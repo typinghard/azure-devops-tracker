@@ -7,7 +7,7 @@ namespace AzureDevopsTracker.Helpers
 {
     public static class ReadJsonHelper
     {
-        public static IEnumerable<WorkItemCustomField> ReadJson(string jsonTexto)
+        public static IEnumerable<WorkItemCustomField> ReadJson(string workItemId, string jsonTexto)
         {
             try
             {
@@ -15,9 +15,9 @@ namespace AzureDevopsTracker.Helpers
                 foreach (KeyValuePair<string, JToken> element in JObject.Parse(jsonTexto))
                 {
                     if (element.Value is JObject)
-                        ReadJsonObject(workItemCustomFields, (JObject)element.Value);
+                        ReadJsonObject(workItemId, workItemCustomFields, (JObject)element.Value);
                     else
-                        GetWorkItemCustomField(workItemCustomFields, element.Key, element.Value.ToString());
+                        GetWorkItemCustomField(workItemCustomFields, workItemId, element.Key, element.Value.ToString());
                 }
 
                 return workItemCustomFields;
@@ -28,19 +28,19 @@ namespace AzureDevopsTracker.Helpers
             }
         }
 
-        private static void ReadJsonObject(List<WorkItemCustomField> workItemCustomFields, JObject objeto)
+        private static void ReadJsonObject(string workItemId, List<WorkItemCustomField> workItemCustomFields, JObject objeto)
         {
             foreach (KeyValuePair<string, JToken> item in objeto)
                 if (item.Value is JObject)
-                    ReadJsonObject(workItemCustomFields, (JObject)item.Value);
+                    ReadJsonObject(workItemId, workItemCustomFields, (JObject)item.Value);
                 else
-                    GetWorkItemCustomField(workItemCustomFields, item.Key, item.Value.ToString());
+                    GetWorkItemCustomField(workItemCustomFields, workItemId, item.Key, item.Value.ToString());
         }
 
-        private static void GetWorkItemCustomField(List<WorkItemCustomField> workItemCustomFields, string key, string value)
+        private static void GetWorkItemCustomField(List<WorkItemCustomField> workItemCustomFields, string workItemId, string key, string value)
         {
             if (key is not null && !key.ToLower().Contains("custom")) return;
-            workItemCustomFields.Add(new WorkItemCustomField(key, value));
+            workItemCustomFields.Add(new WorkItemCustomField(workItemId, key, value));
         }
     }
 }

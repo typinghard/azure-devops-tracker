@@ -11,8 +11,9 @@ namespace AzureDevopsTracker.Entities
 
         public WorkItem WorkItem { get; private set; }
 
-        public WorkItemCustomField(string key, string value)
+        public WorkItemCustomField(string workItemId, string key, string value)
         {
+            WorkItemId = workItemId;
             Key = key;
             Value = value;
         }
