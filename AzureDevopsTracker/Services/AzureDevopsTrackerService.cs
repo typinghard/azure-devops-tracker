@@ -233,6 +233,9 @@ namespace AzureDevopsTracker.Services
                     return;
 
                 workItem.AddCustomFields(customFields);
+
+                _workItemRepository.Update(workItem);
+                await _workItemRepository.SaveChangesAsync();
             }
             catch
             { }
@@ -254,6 +257,9 @@ namespace AzureDevopsTracker.Services
                     return;
 
                 workItem.UpdateCustomFields(customFields);
+
+                _workItemRepository.Update(workItem);
+                await _workItemRepository.SaveChangesAsync();
             }
             catch
             { }
