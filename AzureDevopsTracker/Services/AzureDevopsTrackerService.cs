@@ -216,7 +216,6 @@ namespace AzureDevopsTracker.Services
         /*
          * Still missing:
          *  - Migration
-         *  - Update function
          */
         public async Task Create(string jsonText, bool addWorkItemChange = true)
         {
@@ -230,26 +229,34 @@ namespace AzureDevopsTracker.Services
                     return;
 
                 var customFields = ReadJsonHelper.ReadJson(workItem.Id, jsonText);
-                if (customFields is not null && customFields.Any())
-                    workItem.AddCustomFields(customFields);
+                if (customFields is null || !customFields.Any())
+                    return;
+
+                workItem.AddCustomFields(customFields);
             }
             catch
             { }
         }
 
-        public Task Update(string jsonText)
+        public async Task Update(string jsonText)
         {
-            throw new NotImplementedException();
-
             try
             {
+                var workItemDTO = JsonConvert.DeserializeObject<UpdatedWorkItemDTO>(jsonText);
+                await Update(workItemDTO);
 
-            }
-            catch (Exception)
-            {
+                var workItem = await _workItemRepository.GetByWorkItemId(workItemDTO.Resource.WorkItemId);
+                if (workItem is null)
+                    return;
 
-                throw;
+                var customFields = ReadJsonHelper.ReadJson(workItem.Id, jsonText);
+                if (customFields is null || !customFields.Any())
+                    return;
+
+                workItem.UpdateCustomFields(customFields);
             }
+            catch
+            { }
         }
         #endregion
     }
