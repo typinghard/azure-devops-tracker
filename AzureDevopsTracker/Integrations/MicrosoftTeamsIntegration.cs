@@ -45,7 +45,7 @@ namespace AzureDevopsTracker.Integrations
                 type = MicrosoftTeamsStatics.Type,
                 context = MicrosoftTeamsStatics.Context,
                 themeColor = MicrosoftTeamsStatics.ThemeColor,
-                summary = GetTitle(changeLog),
+                summary = GetTitle(),
                 sections = new Section[1]
                 {
                     new Section()
