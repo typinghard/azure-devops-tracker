@@ -21,6 +21,7 @@ namespace AzureDevopsTracker.Entities
         public string WorkItemParentId { get; private set; }
         public string Activity { get; private set; }
         public string Lancado { get; private set; }
+        public bool Deleted { get; private set; }
 
         public ChangeLogItem ChangeLogItem { get; private set; }
 
@@ -68,6 +69,16 @@ namespace AzureDevopsTracker.Entities
             OriginalEstimate = originalEstimate;
             Activity = activity;
             Lancado = lancado;
+        }
+
+        public void Restore()
+        {
+            Deleted = false;
+        }
+
+        public void Delete()
+        {
+            Deleted = true;
         }
 
         public void Validate()

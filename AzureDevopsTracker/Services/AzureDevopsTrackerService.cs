@@ -1,5 +1,7 @@
 ﻿using AzureDevopsTracker.DTOs;
 using AzureDevopsTracker.DTOs.Create;
+using AzureDevopsTracker.DTOs.Delete;
+using AzureDevopsTracker.DTOs.Restore;
 using AzureDevopsTracker.DTOs.Update;
 using AzureDevopsTracker.Entities;
 using AzureDevopsTracker.Extensions;
@@ -57,14 +59,14 @@ namespace AzureDevopsTracker.Services
             await _workItemRepository.SaveChangesAsync();
         }
 
-        public async Task Create(UpdatedWorkItemDTO updateDto)
+        public async Task Create(string workItemId, Fields fields)
         {
             var createDto = new CreateWorkItemDTO()
             {
-                Resource = new DTOs.Create.Resource()
+                Resource = new DTOs.Resource()
                 {
-                    Fields = updateDto.Resource.Revision.Fields,
-                    Id = updateDto.Resource.WorkItemId,
+                    Fields = fields,
+                    Id = workItemId,
                 }
             };
 
@@ -74,7 +76,7 @@ namespace AzureDevopsTracker.Services
         public async Task Update(UpdatedWorkItemDTO update)
         {
             if (!_workItemRepository.Exist(update.Resource.WorkItemId).Result)
-                await Create(update);
+                await Create(update.Resource.WorkItemId, update.Resource.Revision.Fields);
 
             var workItem = await _workItemRepository.GetByWorkItemId(update.Resource.WorkItemId);
             if (workItem is null)
@@ -98,6 +100,66 @@ namespace AzureDevopsTracker.Services
             AddWorkItemChange(workItem, update);
 
             CheckWorkItemAvailableToChangeLog(workItem, update.Resource.Revision.Fields);
+
+            _workItemRepository.Update(workItem);
+            await _workItemRepository.SaveChangesAsync();
+        }
+
+        public async Task Delete(DeleteWorkItemDTO delete)
+        {
+            if (!_workItemRepository.Exist(delete.Resource.Id).Result)
+                await Create(delete.Resource.Id, delete.Resource.Fields);
+
+            var workItem = await _workItemRepository.GetByWorkItemId(delete.Resource.Id);
+            if (workItem is null)
+                return;
+
+            workItem.Delete();
+
+            workItem.Update(delete.Resource.Fields.Title,
+                delete.Resource.Fields.TeamProject,
+                delete.Resource.Fields.AreaPath,
+                delete.Resource.Fields.IterationPath,
+                delete.Resource.Fields.Type,
+                delete.Resource.Fields.CreatedBy.ExtractEmail(),
+                delete.Resource.Fields.AssignedTo.ExtractEmail(),
+                delete.Resource.Fields.Tags,
+                delete.Resource.Fields.Parent,
+                delete.Resource.Fields.Effort,
+                delete.Resource.Fields.StoryPoints,
+                delete.Resource.Fields.OriginalEstimate,
+                delete.Resource.Fields.Activity,
+                delete.Resource.Fields.Lancado);
+
+            _workItemRepository.Update(workItem);
+            await _workItemRepository.SaveChangesAsync();
+        }
+
+        public async Task Restore(RestoreWorkItemDTO restore)
+        {
+            if (!_workItemRepository.Exist(restore.Resource.Id).Result)
+                await Create(restore.Resource.Id, restore.Resource.Fields);
+
+            var workItem = await _workItemRepository.GetByWorkItemId(restore.Resource.Id);
+            if (workItem is null)
+                return;
+
+            workItem.Restore();
+
+            workItem.Update(restore.Resource.Fields.Title,
+                restore.Resource.Fields.TeamProject,
+                restore.Resource.Fields.AreaPath,
+                restore.Resource.Fields.IterationPath,
+                restore.Resource.Fields.Type,
+                restore.Resource.Fields.CreatedBy.ExtractEmail(),
+                restore.Resource.Fields.AssignedTo.ExtractEmail(),
+                restore.Resource.Fields.Tags,
+                restore.Resource.Fields.Parent,
+                restore.Resource.Fields.Effort,
+                restore.Resource.Fields.StoryPoints,
+                restore.Resource.Fields.OriginalEstimate,
+                restore.Resource.Fields.Activity,
+                restore.Resource.Fields.Lancado);
 
             _workItemRepository.Update(workItem);
             await _workItemRepository.SaveChangesAsync();
