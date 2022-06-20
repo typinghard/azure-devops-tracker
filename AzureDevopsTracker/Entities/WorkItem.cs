@@ -25,13 +25,13 @@ namespace AzureDevopsTracker.Entities
 
         public ChangeLogItem ChangeLogItem { get; private set; }
 
-        private readonly List<WorkItemChange> _workItemsChanges = new List<WorkItemChange>();
+        private readonly List<WorkItemChange> _workItemsChanges = new();
         public IReadOnlyCollection<WorkItemChange> WorkItemsChanges => _workItemsChanges;
 
-        private readonly List<TimeByState> _timeByState = new List<TimeByState>();
+        private readonly List<TimeByState> _timeByState = new();
         public IReadOnlyCollection<TimeByState> TimeByStates => _timeByState;
 
-        private readonly List<WorkItemCustomField> _workItemCustomFields = new List<WorkItemCustomField>();
+        private readonly List<WorkItemCustomField> _workItemCustomFields = new();
         public IReadOnlyCollection<WorkItemCustomField> CustomFields => _workItemCustomFields;
         public string CurrentStatus => _workItemsChanges?.OrderBy(x => x.CreatedAt)?.LastOrDefault()?.NewState;
         public string LastStatus => _workItemsChanges?.OrderBy(x => x.CreatedAt)?.ToList()?.Skip(1)?.LastOrDefault()?.OldState;
@@ -117,9 +117,6 @@ namespace AzureDevopsTracker.Entities
             if (customField is null)
                 throw new ArgumentException("CustomField is null");
 
-            if (customField.WorkItemId.IsNullOrEmpty())
-                customField.LinkWorkItem(Id);
-
             _workItemCustomFields.Add(customField);
         }
 
@@ -137,20 +134,8 @@ namespace AzureDevopsTracker.Entities
             if (newCustomFields is not null && !newCustomFields.Any())
                 return;
 
-            var customFieldsToAdd = newCustomFields.Where(x => !_workItemCustomFields.Select(x => x.Key).Contains(x.Key));
-            AddCustomFields(customFieldsToAdd);
-
-            var customFieldsToUpdate = newCustomFields.Where(x => _workItemCustomFields.Select(x => x.Key).Contains(x.Key));
-            foreach (var newCustomField in customFieldsToUpdate)
-            {
-                var customField = _workItemCustomFields.FirstOrDefault(x => x.Key == newCustomField.Key);
-                if (customField is null) continue;
-
-                if (customField.WorkItemId.IsNullOrEmpty())
-                    customField.LinkWorkItem(Id);
-
-                customField.Update(customField.Value);
-            }
+            _workItemCustomFields.Clear();
+            AddCustomFields(newCustomFields);
         }
 
         public void ClearTimesByState()

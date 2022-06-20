@@ -18,14 +18,6 @@ namespace AzureDevopsTracker.Entities
             Value = value;
         }
 
-        public void LinkWorkItem(string workItemId)
-        {
-            if (workItemId.IsNullOrEmpty())
-                throw new ArgumentException("WorkItemId is required");
-
-            WorkItemId = workItemId;
-        }
-
         public void Update(string value)
         {
             Value = value;
