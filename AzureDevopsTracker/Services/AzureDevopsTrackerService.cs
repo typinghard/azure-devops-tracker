@@ -8,6 +8,8 @@ using AzureDevopsTracker.Extensions;
 using AzureDevopsTracker.Helpers;
 using AzureDevopsTracker.Interfaces;
 using AzureDevopsTracker.Interfaces.Internals;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
@@ -20,15 +22,18 @@ namespace AzureDevopsTracker.Services
         public readonly IWorkItemRepository _workItemRepository;
         public readonly IWorkItemAdapter _workItemAdapter;
         public readonly IChangeLogItemRepository _changeLogItemRepository;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
         public AzureDevopsTrackerService(
             IWorkItemAdapter workItemAdapter,
             IWorkItemRepository workItemRepository,
-            IChangeLogItemRepository changeLogItemRepository)
+            IChangeLogItemRepository changeLogItemRepository,
+            IServiceScopeFactory serviceScopeFactory)
         {
             _workItemAdapter = workItemAdapter;
             _workItemRepository = workItemRepository;
             _changeLogItemRepository = changeLogItemRepository;
+            _serviceScopeFactory = serviceScopeFactory;
         }
 
         public async Task Create(CreateWorkItemDTO create, bool addWorkItemChange = true)
@@ -54,6 +59,8 @@ namespace AzureDevopsTracker.Services
                 AddWorkItemChange(workItem, create);
 
             CheckWorkItemAvailableToChangeLog(workItem, create.Resource.Fields);
+
+            ManipulateCustomFields(workItem);
 
             await _workItemRepository.Add(workItem);
             await _workItemRepository.SaveChangesAsync();
@@ -101,6 +108,8 @@ namespace AzureDevopsTracker.Services
 
             CheckWorkItemAvailableToChangeLog(workItem, update.Resource.Revision.Fields);
 
+            ManipulateCustomFields(workItem);
+
             _workItemRepository.Update(workItem);
             await _workItemRepository.SaveChangesAsync();
         }
@@ -130,6 +139,8 @@ namespace AzureDevopsTracker.Services
                 delete.Resource.Fields.OriginalEstimate,
                 delete.Resource.Fields.Activity,
                 delete.Resource.Fields.Lancado);
+
+            ManipulateCustomFields(workItem);
 
             _workItemRepository.Update(workItem);
             await _workItemRepository.SaveChangesAsync();
@@ -161,6 +172,8 @@ namespace AzureDevopsTracker.Services
                 restore.Resource.Fields.Activity,
                 restore.Resource.Fields.Lancado);
 
+            ManipulateCustomFields(workItem);
+
             _workItemRepository.Update(workItem);
             await _workItemRepository.SaveChangesAsync();
         }
@@ -175,6 +188,31 @@ namespace AzureDevopsTracker.Services
         }
 
         #region Support Methods
+        public void ManipulateCustomFields(WorkItem workItem)
+        {
+            try
+            {
+                var json = GetRequestBody();
+                if (json.IsNullOrEmpty())
+                    return;
+
+                var customFields = ReadJsonHelper.ReadJson(workItem.Id, json);
+                if (customFields is null || !customFields.Any())
+                    return;
+
+                workItem.UpdateCustomFields(customFields);
+            }
+            catch
+            { }
+        }
+
+        public string GetRequestBody()
+        {
+            using var scope = _serviceScopeFactory.CreateScope();
+            var httpContext = scope.ServiceProvider.GetService<IHttpContextAccessor>();
+            return httpContext?.HttpContext?.Request?.Body?.ToString();
+        }
+
         public WorkItemChange ToWorkItemChange(
             string workItemId, string changedBy,
             string iterationPath, DateTime newDate, string newState,
@@ -273,58 +311,6 @@ namespace AzureDevopsTracker.Services
 
                 workItem.RemoveChangeLogItem();
             }
-        }
-
-        /*
-         * Still missing:
-         *  - Migration
-         */
-        public async Task Create(string jsonText, bool addWorkItemChange = true)
-        {
-            try
-            {
-                var workItemDTO = JsonConvert.DeserializeObject<CreateWorkItemDTO>(jsonText);
-                await Create(workItemDTO);
-
-                var workItem = await _workItemRepository.GetByWorkItemId(workItemDTO.Resource.Id);
-                if (workItem is null)
-                    return;
-
-                var customFields = ReadJsonHelper.ReadJson(workItem.Id, jsonText);
-                if (customFields is null || !customFields.Any())
-                    return;
-
-                workItem.AddCustomFields(customFields);
-
-                _workItemRepository.Update(workItem);
-                await _workItemRepository.SaveChangesAsync();
-            }
-            catch
-            { }
-        }
-
-        public async Task Update(string jsonText)
-        {
-            try
-            {
-                var workItemDTO = JsonConvert.DeserializeObject<UpdatedWorkItemDTO>(jsonText);
-                await Update(workItemDTO);
-
-                var workItem = await _workItemRepository.GetByWorkItemId(workItemDTO.Resource.WorkItemId);
-                if (workItem is null)
-                    return;
-
-                var customFields = ReadJsonHelper.ReadJson(workItem.Id, jsonText);
-                if (customFields is null || !customFields.Any())
-                    return;
-
-                workItem.UpdateCustomFields(customFields);
-
-                _workItemRepository.Update(workItem);
-                await _workItemRepository.SaveChangesAsync();
-            }
-            catch
-            { }
         }
         #endregion
     }
