@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AzureDevopsTracker.Statics
+﻿namespace AzureDevopsTracker.Statics
 {
     internal class WorkItemStatics
     {

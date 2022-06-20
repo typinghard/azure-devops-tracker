@@ -66,29 +66,23 @@ namespace AzureDevopsTracker.Integrations
         {
             if (changeLog == null || !changeLog.ChangeLogItems.Any()) return string.Empty;
 
-            StringBuilder text = new StringBuilder();
-            text.Append(GetWorkItemsDescriptionSection("Features", changeLog.ChangeLogItems.Where(x => x.WorkItemType != WorkItemStatics.WORKITEM_TYPE_BUG)));
-            text.Append(GetWorkItemsDescriptionSection("Correções", changeLog.ChangeLogItems.Where(x => x.WorkItemType == WorkItemStatics.WORKITEM_TYPE_BUG)));
+            StringBuilder text = new();
+            text.AppendLine(GetWorkItemsDescriptionSection("Features", changeLog.ChangeLogItems.Where(x => x.WorkItemType != WorkItemStatics.WORKITEM_TYPE_BUG)));
+            text.AppendLine(GetWorkItemsDescriptionSection("Correções", changeLog.ChangeLogItems.Where(x => x.WorkItemType == WorkItemStatics.WORKITEM_TYPE_BUG)));
 
-            text.Append(GetFooter());
+            text.AppendLine(GetFooter());
             return text.ToString();
         }
 
         private string GetWorkItemsDescriptionSection(string sectionName, IEnumerable<ChangeLogItem> changeLogItems)
         {
-            StringBuilder text = new StringBuilder();
+            StringBuilder text = new();
             if (!changeLogItems.Any()) return string.Empty;
 
-            text.Append("<br>");
-            text.AppendLine("\n");
-
-            text.Append($"\n  # **{ sectionName }**\n");
+            text.AppendLine($"\n# **{ sectionName }**\n");
             foreach (var workItem in changeLogItems)
-            {
-                text.Append(GetWorkItemDescriptionLine(workItem));
-            }
+                text.AppendLine(GetWorkItemDescriptionLine(workItem));
 
-            text.Append("<br>");
             text.AppendLine("\n");
             return text.ToString();
         }
@@ -96,24 +90,17 @@ namespace AzureDevopsTracker.Integrations
         private string GetWorkItemDescriptionLine(ChangeLogItem workItem)
         {
             var description = GetDescription(workItem.Description);
-            var descriptionLine = $"<em>**{ workItem.WorkItemId }**</em> - { description }";
-            if (description.Length > MicrosoftTeamsStatics.TEXT_SIZE_TO_BREAK_LINE)
-                return $"<br>{ descriptionLine }<br>";
-            return descriptionLine;
+            return $"<em>**{ workItem.WorkItemId }**</em> - { description } <br>";
         }
 
         private string GetDescription(string description)
         {
-            if (description.StartsWith("<div>"))
-                description = description[MicrosoftTeamsStatics.OPENING_DIV_SIZE..];
-            if(description.EndsWith("</div>"))
-                description = description[0..^MicrosoftTeamsStatics.CLOSING_DIV_SIZE];
-            return description;
+            return description.Replace("<div>", "").Replace("</div>", "").Replace("<br>", "");
         }
 
         private string GetFooter()
         {
-            return $"<br><sup> <img src='{ GetLogoTypingHard16x16Url() }' /> { GetNugetVersion() }</sup>";
+            return $"<br><sup> <img style='width: 16px; height: 16px;' src='{ GetLogoTypingHard16x16Url() }' /> { GetNugetVersion() }</sup>";
         }
     }
 }
