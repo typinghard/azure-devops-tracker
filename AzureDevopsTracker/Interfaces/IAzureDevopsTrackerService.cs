@@ -14,5 +14,8 @@ namespace AzureDevopsTracker.Interfaces
         Task Delete(DeleteWorkItemDTO deleteDto);
         Task Restore(RestoreWorkItemDTO restoreDto);
         Task<WorkItemDTO> GetByWorkItemId(string workItemId);
+
+        Task Create(string jsonText, bool addWorkItemChange = true);
+        Task Update(string jsonText);
     }
 }

@@ -18,6 +18,7 @@ namespace AzureDevopsTracker.Data
                           .Include(x => x.WorkItemsChanges)
                           .Include(x => x.TimeByStates)
                           .Include(x => x.ChangeLogItem)
+                          .Include(x => x.CustomFields)
                           .FirstOrDefaultAsync(x => x.Id == workItemId);
         }
 
@@ -27,6 +28,7 @@ namespace AzureDevopsTracker.Data
                           .Include(x => x.WorkItemsChanges)
                           .Include(x => x.TimeByStates)
                           .Include(x => x.ChangeLogItem)
+                          .Include(x => x.CustomFields)
                           .Where(x => workItemsId.Contains(x.Id))
                           .ToListAsync();
         }
@@ -37,6 +39,7 @@ namespace AzureDevopsTracker.Data
                           .Include(x => x.WorkItemsChanges)
                           .Include(x => x.TimeByStates)
                           .Include(x => x.ChangeLogItem)
+                          .Include(x => x.CustomFields)
                           .Where(x => x.IterationPath == iterationPath)
                           .ToListAsync();
         }

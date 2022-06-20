@@ -5,8 +5,10 @@ using AzureDevopsTracker.DTOs.Restore;
 using AzureDevopsTracker.DTOs.Update;
 using AzureDevopsTracker.Entities;
 using AzureDevopsTracker.Extensions;
+using AzureDevopsTracker.Helpers;
 using AzureDevopsTracker.Interfaces;
 using AzureDevopsTracker.Interfaces.Internals;
+using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -231,7 +233,7 @@ namespace AzureDevopsTracker.Services
         {
             if (workItem.CurrentStatus != "Closed" &&
                 workItem.LastStatus == "Closed" &&
-                workItem.ChangeLogItem != null &&
+                workItem.ChangeLogItem is not null &&
                 !workItem.ChangeLogItem.WasReleased)
                 RemoveChangeLogItem(workItem);
 
@@ -239,7 +241,7 @@ namespace AzureDevopsTracker.Services
                 fields.ChangeLogDescription.IsNullOrEmpty())
                 return;
 
-            if (workItem.ChangeLogItem == null)
+            if (workItem.ChangeLogItem is null)
                 workItem.VinculateChangeLogItem(ToChangeLogItem(workItem, fields));
             else
                 workItem.ChangeLogItem.Update(workItem.Title, workItem.Type, fields.ChangeLogDescription);
@@ -264,13 +266,65 @@ namespace AzureDevopsTracker.Services
         public void RemoveChangeLogItem(WorkItem workItem)
         {
             var changeLogItem = _changeLogItemRepository.GetById(workItem.ChangeLogItem?.Id).Result;
-            if (changeLogItem != null)
+            if (changeLogItem is not null)
             {
                 _changeLogItemRepository.Delete(changeLogItem);
                 _changeLogItemRepository.SaveChangesAsync().Wait();
 
                 workItem.RemoveChangeLogItem();
             }
+        }
+
+        /*
+         * Still missing:
+         *  - Migration
+         */
+        public async Task Create(string jsonText, bool addWorkItemChange = true)
+        {
+            try
+            {
+                var workItemDTO = JsonConvert.DeserializeObject<CreateWorkItemDTO>(jsonText);
+                await Create(workItemDTO);
+
+                var workItem = await _workItemRepository.GetByWorkItemId(workItemDTO.Resource.Id);
+                if (workItem is null)
+                    return;
+
+                var customFields = ReadJsonHelper.ReadJson(workItem.Id, jsonText);
+                if (customFields is null || !customFields.Any())
+                    return;
+
+                workItem.AddCustomFields(customFields);
+
+                _workItemRepository.Update(workItem);
+                await _workItemRepository.SaveChangesAsync();
+            }
+            catch
+            { }
+        }
+
+        public async Task Update(string jsonText)
+        {
+            try
+            {
+                var workItemDTO = JsonConvert.DeserializeObject<UpdatedWorkItemDTO>(jsonText);
+                await Update(workItemDTO);
+
+                var workItem = await _workItemRepository.GetByWorkItemId(workItemDTO.Resource.WorkItemId);
+                if (workItem is null)
+                    return;
+
+                var customFields = ReadJsonHelper.ReadJson(workItem.Id, jsonText);
+                if (customFields is null || !customFields.Any())
+                    return;
+
+                workItem.UpdateCustomFields(customFields);
+
+                _workItemRepository.Update(workItem);
+                await _workItemRepository.SaveChangesAsync();
+            }
+            catch
+            { }
         }
         #endregion
     }

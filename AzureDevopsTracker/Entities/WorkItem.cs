@@ -25,24 +25,21 @@ namespace AzureDevopsTracker.Entities
 
         public ChangeLogItem ChangeLogItem { get; private set; }
 
-        private readonly List<WorkItemChange> _workItemsChanges;
+        private readonly List<WorkItemChange> _workItemsChanges = new List<WorkItemChange>();
         public IReadOnlyCollection<WorkItemChange> WorkItemsChanges => _workItemsChanges;
 
-        private readonly List<TimeByState> _timeByState;
+        private readonly List<TimeByState> _timeByState = new List<TimeByState>();
         public IReadOnlyCollection<TimeByState> TimeByStates => _timeByState;
+
+        private readonly List<WorkItemCustomField> _workItemCustomFields = new List<WorkItemCustomField>();
+        public IReadOnlyCollection<WorkItemCustomField> CustomFields => _workItemCustomFields;
         public string CurrentStatus => _workItemsChanges?.OrderBy(x => x.CreatedAt)?.LastOrDefault()?.NewState;
         public string LastStatus => _workItemsChanges?.OrderBy(x => x.CreatedAt)?.ToList()?.Skip(1)?.LastOrDefault()?.OldState;
 
-        private WorkItem()
-        {
-            _workItemsChanges = new List<WorkItemChange>();
-            _timeByState = new List<TimeByState>();
-        }
+        private WorkItem() { }
 
         public WorkItem(string workItemId) : base(workItemId)
         {
-            _workItemsChanges = new List<WorkItemChange>();
-            _timeByState = new List<TimeByState>();
             Validate();
         }
 
@@ -87,32 +84,73 @@ namespace AzureDevopsTracker.Entities
         public void Validate()
         {
             if (Id.IsNullOrEmpty())
-                throw new Exception("WorkItemId is required");
+                throw new ArgumentException("WorkItemId is required");
         }
 
         public void AddWorkItemChange(WorkItemChange workItemChange)
         {
-            if (workItemChange == null)
-                throw new Exception("WorkItemChange is null");
+            if (workItemChange is null)
+                throw new ArgumentException("WorkItemChange is null");
 
             _workItemsChanges.Add(workItemChange);
         }
 
         public void AddTimeByState(TimeByState timeByState)
         {
-            if (timeByState == null)
-                throw new Exception("TimeByState is null");
+            if (timeByState is null)
+                throw new ArgumentException("TimeByState is null");
 
             _timeByState.Add(timeByState);
         }
 
         public void AddTimesByState(IEnumerable<TimeByState> timesByState)
         {
-            if (!timesByState.Any())
+            if (timesByState is not null && !timesByState.Any())
                 return;
 
             foreach (var timeByState in timesByState)
                 AddTimeByState(timeByState);
+        }
+
+        public void AddCustomField(WorkItemCustomField customField)
+        {
+            if (customField is null)
+                throw new ArgumentException("CustomField is null");
+
+            if (customField.WorkItemId.IsNullOrEmpty())
+                customField.LinkWorkItem(Id);
+
+            _workItemCustomFields.Add(customField);
+        }
+
+        public void AddCustomFields(IEnumerable<WorkItemCustomField> customFields)
+        {
+            if (customFields is not null && !customFields.Any())
+                return;
+
+            foreach (var customField in customFields)
+                AddCustomField(customField);
+        }
+
+        public void UpdateCustomFields(IEnumerable<WorkItemCustomField> newCustomFields)
+        {
+            if (newCustomFields is not null && !newCustomFields.Any())
+                return;
+
+            var customFieldsToAdd = newCustomFields.Where(x => !_workItemCustomFields.Select(x => x.Key).Contains(x.Key));
+            AddCustomFields(customFieldsToAdd);
+
+            var customFieldsToUpdate = newCustomFields.Where(x => _workItemCustomFields.Select(x => x.Key).Contains(x.Key));
+            foreach (var newCustomField in customFieldsToUpdate)
+            {
+                var customField = _workItemCustomFields.FirstOrDefault(x => x.Key == newCustomField.Key);
+                if (customField is null) continue;
+
+                if (customField.WorkItemId.IsNullOrEmpty())
+                    customField.LinkWorkItem(Id);
+
+                customField.Update(customField.Value);
+            }
         }
 
         public void ClearTimesByState()
@@ -127,8 +165,8 @@ namespace AzureDevopsTracker.Entities
 
         public void VinculateChangeLogItem(ChangeLogItem changeLogItem)
         {
-            if (changeLogItem == null)
-                throw new Exception("ChangeLogItem is null");
+            if (changeLogItem is null)
+                throw new ArgumentException("ChangeLogItem is null");
 
             ChangeLogItem = changeLogItem;
         }
@@ -139,7 +177,7 @@ namespace AzureDevopsTracker.Entities
             if (!_workItemsChanges.Any())
                 return timesByStateList;
 
-            foreach (var workItemChange in _workItemsChanges.OrderBy(x => x.CreatedAt).GroupBy(x => x.OldState).Where(x => x.Key != null))
+            foreach (var workItemChange in _workItemsChanges.OrderBy(x => x.CreatedAt).GroupBy(x => x.OldState).Where(x => x.Key is not null))
             {
                 var totalTime = TimeSpan.Zero;
                 var totalWorkedTime = TimeSpan.Zero;
