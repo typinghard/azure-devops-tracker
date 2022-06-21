@@ -13,8 +13,8 @@ namespace AzureDevopsTracker.Migrations
                 columns: table => new
                 {
                     WorkItemId = table.Column<string>(type: "varchar(200)", nullable: false),
-                    Key = table.Column<string>(type: "varchar(200)", nullable: false),
-                    Value = table.Column<string>(type: "varchar(200)", nullable: true)
+                    Key = table.Column<string>(type: "varchar(1000)", nullable: false),
+                    Value = table.Column<string>(type: "varchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {

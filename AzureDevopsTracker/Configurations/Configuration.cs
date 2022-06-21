@@ -6,6 +6,7 @@ using AzureDevopsTracker.Interfaces;
 using AzureDevopsTracker.Interfaces.Internals;
 using AzureDevopsTracker.Services;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -20,6 +21,8 @@ namespace AzureDevopsTracker.Configurations
                     options.UseSqlServer(DataBaseConfig.ConnectionsString));
 
             services.AddMessageIntegrations();
+
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddScoped<AzureDevopsTrackerContext>();
             services.AddScoped<IWorkItemAdapter, WorkItemAdapter>();
@@ -44,7 +47,7 @@ namespace AzureDevopsTracker.Configurations
                 case EMessengers.MICROSOFT_TEAMS:
                     services.AddScoped<MessageIntegration, MicrosoftTeamsIntegration>();
                     break;
-                default: 
+                default:
                     services.AddScoped<MessageIntegration, FakeIntegration>();
                     break;
             }

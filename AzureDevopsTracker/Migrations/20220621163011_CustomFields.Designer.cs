@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AzureDevopsTracker.Migrations
 {
     [DbContext(typeof(AzureDevopsTrackerContext))]
-    [Migration("20220620220028_CustomFields")]
+    [Migration("20220621163011_CustomFields")]
     partial class CustomFields
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -209,10 +209,10 @@ namespace AzureDevopsTracker.Migrations
                         .HasColumnType("varchar(200)");
 
                     b.Property<string>("Key")
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("varchar(1000)");
 
                     b.Property<string>("Value")
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("varchar(max)");
 
                     b.HasKey("WorkItemId", "Key");
 

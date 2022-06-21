@@ -122,7 +122,7 @@ namespace AzureDevopsTracker.Entities
 
         public void AddCustomFields(IEnumerable<WorkItemCustomField> customFields)
         {
-            if (customFields is not null && !customFields.Any())
+            if (customFields is null || !customFields.Any())
                 return;
 
             foreach (var customField in customFields)
@@ -131,7 +131,7 @@ namespace AzureDevopsTracker.Entities
 
         public void UpdateCustomFields(IEnumerable<WorkItemCustomField> newCustomFields)
         {
-            if (newCustomFields is not null && !newCustomFields.Any())
+            if (newCustomFields is null || !newCustomFields.Any())
                 return;
 
             _workItemCustomFields.Clear();

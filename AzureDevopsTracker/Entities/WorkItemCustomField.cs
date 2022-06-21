@@ -14,8 +14,8 @@ namespace AzureDevopsTracker.Entities
         public WorkItemCustomField(string workItemId, string key, string value)
         {
             WorkItemId = workItemId;
-            Key = key;
-            Value = value;
+            Key = key.Truncate(1000);
+            Value = value.Truncate();
         }
 
         public void Update(string value)

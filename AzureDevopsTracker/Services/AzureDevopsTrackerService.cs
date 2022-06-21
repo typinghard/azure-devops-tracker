@@ -9,10 +9,10 @@ using AzureDevopsTracker.Helpers;
 using AzureDevopsTracker.Interfaces;
 using AzureDevopsTracker.Interfaces.Internals;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 using System;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace AzureDevopsTracker.Services
@@ -22,18 +22,18 @@ namespace AzureDevopsTracker.Services
         public readonly IWorkItemRepository _workItemRepository;
         public readonly IWorkItemAdapter _workItemAdapter;
         public readonly IChangeLogItemRepository _changeLogItemRepository;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public AzureDevopsTrackerService(
             IWorkItemAdapter workItemAdapter,
             IWorkItemRepository workItemRepository,
             IChangeLogItemRepository changeLogItemRepository,
-            IServiceScopeFactory serviceScopeFactory)
+            IHttpContextAccessor httpContextAccessor)
         {
             _workItemAdapter = workItemAdapter;
             _workItemRepository = workItemRepository;
             _changeLogItemRepository = changeLogItemRepository;
-            _serviceScopeFactory = serviceScopeFactory;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task Create(CreateWorkItemDTO create, bool addWorkItemChange = true)
@@ -60,7 +60,7 @@ namespace AzureDevopsTracker.Services
 
             CheckWorkItemAvailableToChangeLog(workItem, create.Resource.Fields);
 
-            ManipulateCustomFields(workItem);
+            AddCustomFields(workItem);
 
             await _workItemRepository.Add(workItem);
             await _workItemRepository.SaveChangesAsync();
@@ -108,7 +108,7 @@ namespace AzureDevopsTracker.Services
 
             CheckWorkItemAvailableToChangeLog(workItem, update.Resource.Revision.Fields);
 
-            ManipulateCustomFields(workItem);
+            AddCustomFields(workItem);
 
             _workItemRepository.Update(workItem);
             await _workItemRepository.SaveChangesAsync();
@@ -140,7 +140,7 @@ namespace AzureDevopsTracker.Services
                 delete.Resource.Fields.Activity,
                 delete.Resource.Fields.Lancado);
 
-            ManipulateCustomFields(workItem);
+            AddCustomFields(workItem);
 
             _workItemRepository.Update(workItem);
             await _workItemRepository.SaveChangesAsync();
@@ -172,7 +172,7 @@ namespace AzureDevopsTracker.Services
                 restore.Resource.Fields.Activity,
                 restore.Resource.Fields.Lancado);
 
-            ManipulateCustomFields(workItem);
+            AddCustomFields(workItem);
 
             _workItemRepository.Update(workItem);
             await _workItemRepository.SaveChangesAsync();
@@ -188,15 +188,15 @@ namespace AzureDevopsTracker.Services
         }
 
         #region Support Methods
-        public void ManipulateCustomFields(WorkItem workItem)
+        public void AddCustomFields(WorkItem workItem)
         {
             try
             {
-                var json = GetRequestBody();
-                if (json.IsNullOrEmpty())
+                var jsonText = GetRequestBody();
+                if (jsonText.IsNullOrEmpty())
                     return;
 
-                var customFields = ReadJsonHelper.ReadJson(workItem.Id, json);
+                var customFields = ReadJsonHelper.ReadJson(workItem.Id, jsonText);
                 if (customFields is null || !customFields.Any())
                     return;
 
@@ -208,9 +208,18 @@ namespace AzureDevopsTracker.Services
 
         public string GetRequestBody()
         {
-            using var scope = _serviceScopeFactory.CreateScope();
-            var httpContext = scope.ServiceProvider.GetService<IHttpContextAccessor>();
-            return httpContext?.HttpContext?.Request?.Body?.ToString();
+            string corpo;
+            var request = _httpContextAccessor?.HttpContext?.Request;
+            using (StreamReader reader = new(request.Body,
+                                             encoding: Encoding.UTF8,
+                                             detectEncodingFromByteOrderMarks: false,
+                                             leaveOpen: true))
+            {
+                request.Body.Position = 0;
+                corpo = reader.ReadToEndAsync()?.Result;
+            }
+
+            return corpo;
         }
 
         public WorkItemChange ToWorkItemChange(

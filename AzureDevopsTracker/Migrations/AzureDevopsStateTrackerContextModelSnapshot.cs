@@ -207,10 +207,10 @@ namespace AzureDevopsTracker.Migrations
                         .HasColumnType("varchar(200)");
 
                     b.Property<string>("Key")
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("varchar(1000)");
 
                     b.Property<string>("Value")
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("varchar(max)");
 
                     b.HasKey("WorkItemId", "Key");
 
