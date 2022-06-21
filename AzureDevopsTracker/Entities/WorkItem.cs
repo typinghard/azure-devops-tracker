@@ -20,7 +20,6 @@ namespace AzureDevopsTracker.Entities
         public string StoryPoints { get; private set; }
         public string WorkItemParentId { get; private set; }
         public string Activity { get; private set; }
-        public string Lancado { get; private set; }
         public bool Deleted { get; private set; }
 
         public ChangeLogItem ChangeLogItem { get; private set; }
@@ -52,8 +51,7 @@ namespace AzureDevopsTracker.Entities
                            string effort,
                            string storyPoint,
                            string originalEstimate,
-                           string activity,
-                           string lancado)
+                           string activity)
         {
             TeamProject = teamProject;
             AreaPath = areaPath;
@@ -68,7 +66,6 @@ namespace AzureDevopsTracker.Entities
             StoryPoints = storyPoint;
             OriginalEstimate = originalEstimate;
             Activity = activity;
-            Lancado = lancado;
         }
 
         public void Restore()

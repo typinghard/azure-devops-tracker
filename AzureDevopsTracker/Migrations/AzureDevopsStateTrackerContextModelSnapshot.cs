@@ -133,9 +133,6 @@ namespace AzureDevopsTracker.Migrations
                     b.Property<string>("IterationPath")
                         .HasColumnType("varchar(200)");
 
-                    b.Property<string>("Lancado")
-                        .HasColumnType("varchar(200)");
-
                     b.Property<string>("OriginalEstimate")
                         .HasColumnType("varchar(200)");
 

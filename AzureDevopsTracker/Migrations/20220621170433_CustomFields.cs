@@ -7,6 +7,11 @@ namespace AzureDevopsTracker.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropColumn(
+                name: "Lancado",
+                schema: DataBaseConfig.SchemaName,
+                table: "WorkItems");
+
             migrationBuilder.CreateTable(
                 name: "CustomFields",
                 schema: DataBaseConfig.SchemaName,
@@ -34,6 +39,13 @@ namespace AzureDevopsTracker.Migrations
             migrationBuilder.DropTable(
                 name: "CustomFields",
                 schema: DataBaseConfig.SchemaName);
+
+            migrationBuilder.AddColumn<string>(
+                name: "Lancado",
+                schema: DataBaseConfig.SchemaName,
+                table: "WorkItems",
+                type: "varchar(200)",
+                nullable: true);
         }
     }
 }

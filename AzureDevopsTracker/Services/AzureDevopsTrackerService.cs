@@ -52,8 +52,7 @@ namespace AzureDevopsTracker.Services
                             create.Resource.Fields.Effort,
                             create.Resource.Fields.StoryPoints,
                             create.Resource.Fields.OriginalEstimate,
-                            create.Resource.Fields.Activity,
-                            create.Resource.Fields.Lancado);
+                            create.Resource.Fields.Activity);
 
             if (addWorkItemChange)
                 AddWorkItemChange(workItem, create);
@@ -101,8 +100,7 @@ namespace AzureDevopsTracker.Services
                             update.Resource.Revision.Fields.Effort,
                             update.Resource.Revision.Fields.StoryPoints,
                             update.Resource.Revision.Fields.OriginalEstimate,
-                            update.Resource.Revision.Fields.Activity,
-                            update.Resource.Revision.Fields.Lancado);
+                            update.Resource.Revision.Fields.Activity);
 
             AddWorkItemChange(workItem, update);
 
@@ -137,8 +135,7 @@ namespace AzureDevopsTracker.Services
                 delete.Resource.Fields.Effort,
                 delete.Resource.Fields.StoryPoints,
                 delete.Resource.Fields.OriginalEstimate,
-                delete.Resource.Fields.Activity,
-                delete.Resource.Fields.Lancado);
+                delete.Resource.Fields.Activity);
 
             AddCustomFields(workItem);
 
@@ -169,8 +166,7 @@ namespace AzureDevopsTracker.Services
                 restore.Resource.Fields.Effort,
                 restore.Resource.Fields.StoryPoints,
                 restore.Resource.Fields.OriginalEstimate,
-                restore.Resource.Fields.Activity,
-                restore.Resource.Fields.Lancado);
+                restore.Resource.Fields.Activity);
 
             AddCustomFields(workItem);
 

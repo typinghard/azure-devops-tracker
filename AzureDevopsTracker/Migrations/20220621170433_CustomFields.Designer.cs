@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AzureDevopsTracker.Migrations
 {
     [DbContext(typeof(AzureDevopsTrackerContext))]
-    [Migration("20220621163011_CustomFields")]
+    [Migration("20220621170433_CustomFields")]
     partial class CustomFields
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -133,9 +133,6 @@ namespace AzureDevopsTracker.Migrations
                         .HasColumnType("varchar(200)");
 
                     b.Property<string>("IterationPath")
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<string>("Lancado")
                         .HasColumnType("varchar(200)");
 
                     b.Property<string>("OriginalEstimate")
