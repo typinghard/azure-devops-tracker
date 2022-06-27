@@ -5,10 +5,14 @@ using AzureDevopsTracker.DTOs.Restore;
 using AzureDevopsTracker.DTOs.Update;
 using AzureDevopsTracker.Entities;
 using AzureDevopsTracker.Extensions;
+using AzureDevopsTracker.Helpers;
 using AzureDevopsTracker.Interfaces;
 using AzureDevopsTracker.Interfaces.Internals;
+using Microsoft.AspNetCore.Http;
 using System;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace AzureDevopsTracker.Services
@@ -18,15 +22,18 @@ namespace AzureDevopsTracker.Services
         public readonly IWorkItemRepository _workItemRepository;
         public readonly IWorkItemAdapter _workItemAdapter;
         public readonly IChangeLogItemRepository _changeLogItemRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public AzureDevopsTrackerService(
             IWorkItemAdapter workItemAdapter,
             IWorkItemRepository workItemRepository,
-            IChangeLogItemRepository changeLogItemRepository)
+            IChangeLogItemRepository changeLogItemRepository,
+            IHttpContextAccessor httpContextAccessor)
         {
             _workItemAdapter = workItemAdapter;
             _workItemRepository = workItemRepository;
             _changeLogItemRepository = changeLogItemRepository;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task Create(CreateWorkItemDTO create, bool addWorkItemChange = true)
@@ -45,13 +52,14 @@ namespace AzureDevopsTracker.Services
                             create.Resource.Fields.Effort,
                             create.Resource.Fields.StoryPoints,
                             create.Resource.Fields.OriginalEstimate,
-                            create.Resource.Fields.Activity,
-                            create.Resource.Fields.Lancado);
+                            create.Resource.Fields.Activity);
 
             if (addWorkItemChange)
                 AddWorkItemChange(workItem, create);
 
             CheckWorkItemAvailableToChangeLog(workItem, create.Resource.Fields);
+
+            AddCustomFields(workItem);
 
             await _workItemRepository.Add(workItem);
             await _workItemRepository.SaveChangesAsync();
@@ -92,12 +100,13 @@ namespace AzureDevopsTracker.Services
                             update.Resource.Revision.Fields.Effort,
                             update.Resource.Revision.Fields.StoryPoints,
                             update.Resource.Revision.Fields.OriginalEstimate,
-                            update.Resource.Revision.Fields.Activity,
-                            update.Resource.Revision.Fields.Lancado);
+                            update.Resource.Revision.Fields.Activity);
 
             AddWorkItemChange(workItem, update);
 
             CheckWorkItemAvailableToChangeLog(workItem, update.Resource.Revision.Fields);
+
+            AddCustomFields(workItem);
 
             _workItemRepository.Update(workItem);
             await _workItemRepository.SaveChangesAsync();
@@ -126,8 +135,9 @@ namespace AzureDevopsTracker.Services
                 delete.Resource.Fields.Effort,
                 delete.Resource.Fields.StoryPoints,
                 delete.Resource.Fields.OriginalEstimate,
-                delete.Resource.Fields.Activity,
-                delete.Resource.Fields.Lancado);
+                delete.Resource.Fields.Activity);
+
+            AddCustomFields(workItem);
 
             _workItemRepository.Update(workItem);
             await _workItemRepository.SaveChangesAsync();
@@ -156,8 +166,9 @@ namespace AzureDevopsTracker.Services
                 restore.Resource.Fields.Effort,
                 restore.Resource.Fields.StoryPoints,
                 restore.Resource.Fields.OriginalEstimate,
-                restore.Resource.Fields.Activity,
-                restore.Resource.Fields.Lancado);
+                restore.Resource.Fields.Activity);
+
+            AddCustomFields(workItem);
 
             _workItemRepository.Update(workItem);
             await _workItemRepository.SaveChangesAsync();
@@ -173,6 +184,40 @@ namespace AzureDevopsTracker.Services
         }
 
         #region Support Methods
+        public void AddCustomFields(WorkItem workItem)
+        {
+            try
+            {
+                var jsonText = GetRequestBody();
+                if (jsonText.IsNullOrEmpty())
+                    return;
+
+                var customFields = ReadJsonHelper.ReadJson(workItem.Id, jsonText);
+                if (customFields is null || !customFields.Any())
+                    return;
+
+                workItem.UpdateCustomFields(customFields);
+            }
+            catch
+            { }
+        }
+
+        public string GetRequestBody()
+        {
+            string corpo;
+            var request = _httpContextAccessor?.HttpContext?.Request;
+            using (StreamReader reader = new(request.Body,
+                                             encoding: Encoding.UTF8,
+                                             detectEncodingFromByteOrderMarks: false,
+                                             leaveOpen: true))
+            {
+                request.Body.Position = 0;
+                corpo = reader.ReadToEndAsync()?.Result;
+            }
+
+            return corpo;
+        }
+
         public WorkItemChange ToWorkItemChange(
             string workItemId, string changedBy,
             string iterationPath, DateTime newDate, string newState,
@@ -231,7 +276,7 @@ namespace AzureDevopsTracker.Services
         {
             if (workItem.CurrentStatus != "Closed" &&
                 workItem.LastStatus == "Closed" &&
-                workItem.ChangeLogItem != null &&
+                workItem.ChangeLogItem is not null &&
                 !workItem.ChangeLogItem.WasReleased)
                 RemoveChangeLogItem(workItem);
 
@@ -239,7 +284,7 @@ namespace AzureDevopsTracker.Services
                 fields.ChangeLogDescription.IsNullOrEmpty())
                 return;
 
-            if (workItem.ChangeLogItem == null)
+            if (workItem.ChangeLogItem is null)
                 workItem.VinculateChangeLogItem(ToChangeLogItem(workItem, fields));
             else
                 workItem.ChangeLogItem.Update(workItem.Title, workItem.Type, fields.ChangeLogDescription);
@@ -264,7 +309,7 @@ namespace AzureDevopsTracker.Services
         public void RemoveChangeLogItem(WorkItem workItem)
         {
             var changeLogItem = _changeLogItemRepository.GetById(workItem.ChangeLogItem?.Id).Result;
-            if (changeLogItem != null)
+            if (changeLogItem is not null)
             {
                 _changeLogItemRepository.Delete(changeLogItem);
                 _changeLogItemRepository.SaveChangesAsync().Wait();

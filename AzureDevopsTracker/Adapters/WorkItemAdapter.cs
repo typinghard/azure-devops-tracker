@@ -12,7 +12,7 @@ namespace AzureDevopsTracker.Adapters
     {
         public WorkItemDTO ToWorkItemDTO(WorkItem workItem)
         {
-            if (workItem == null) return null;
+            if (workItem is null) return null;
 
             return new WorkItemDTO()
             {
@@ -31,7 +31,7 @@ namespace AzureDevopsTracker.Adapters
                 OriginalEstimate = workItem.OriginalEstimate,
                 WorkItemParentId = workItem.WorkItemParentId,
                 Activity = workItem.Activity,
-                Tags = workItem.Tags == null ? new List<string>() : workItem.Tags.Split(';').ToList(),
+                Tags = workItem.Tags is null ? new List<string>() : workItem.Tags.Split(';').ToList(),
                 WorkItemsChangesDTO = ToWorkItemsChangeDTO(workItem.WorkItemsChanges.OrderBy(x => x.CreatedAt).ToList()),
                 TimesByStateDTO = ToTimeByStatesDTO(workItem.CalculateTotalTimeByState().ToList()),
             };
@@ -41,7 +41,7 @@ namespace AzureDevopsTracker.Adapters
         {
             var workItemsDTO = new List<WorkItemDTO>();
 
-            if (workItems == null) return workItemsDTO;
+            if (workItems is null) return workItemsDTO;
 
             workItems.ForEach(
                         workItem =>
@@ -53,7 +53,7 @@ namespace AzureDevopsTracker.Adapters
 
         public WorkItemChangeDTO ToWorkItemChangeDTO(WorkItemChange workIteChange)
         {
-            if (workIteChange == null) return null;
+            if (workIteChange is null) return null;
 
             return new WorkItemChangeDTO()
             {
@@ -69,20 +69,20 @@ namespace AzureDevopsTracker.Adapters
         {
             var workItemsChangeDTO = new List<WorkItemChangeDTO>();
 
-            if (workItemsChanges == null) return workItemsChangeDTO;
+            if (workItemsChanges is null) return workItemsChangeDTO;
 
             workItemsChanges.ForEach(
                         workItemsChange =>
                         workItemsChangeDTO.Add(ToWorkItemChangeDTO(workItemsChange)));
 
             return workItemsChangeDTO
-                     .Where(w => w != null)
+                     .Where(w => w is not null)
                      .ToList();
         }
 
         public TimeByStateDTO ToTimeByStateDTO(TimeByState workItemStatusTime)
         {
-            if (workItemStatusTime == null) return null;
+            if (workItemStatusTime is null) return null;
 
             return new TimeByStateDTO()
             {
@@ -97,14 +97,14 @@ namespace AzureDevopsTracker.Adapters
         {
             var workItemStatusTimeDTO = new List<TimeByStateDTO>();
 
-            if (workItemStatusTimes == null) return workItemStatusTimeDTO;
+            if (workItemStatusTimes is null) return workItemStatusTimeDTO;
 
             workItemStatusTimes.ForEach(
                         workItemStatusTime =>
                         workItemStatusTimeDTO.Add(ToTimeByStateDTO(workItemStatusTime)));
 
             return workItemStatusTimeDTO
-                     .Where(w => w != null)
+                     .Where(w => w is not null)
                      .ToList();
         }
     }

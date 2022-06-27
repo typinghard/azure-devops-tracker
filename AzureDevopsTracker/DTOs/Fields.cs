@@ -74,9 +74,6 @@ namespace AzureDevopsTracker.DTOs
         [JsonProperty("Microsoft.VSTS.Common.Activity")]
         public string Activity { get; set; }
 
-        [JsonProperty("Custom.01f51eeb-416d-49b1-b7f9-b92f3a675de1")]
-        public string Lancado { get; set; }
-
         [JsonProperty("Custom.ChangeLogDescription")]
         public string ChangeLogDescription { get; set; }
     }

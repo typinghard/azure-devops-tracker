@@ -20,29 +20,25 @@ namespace AzureDevopsTracker.Entities
         public string StoryPoints { get; private set; }
         public string WorkItemParentId { get; private set; }
         public string Activity { get; private set; }
-        public string Lancado { get; private set; }
         public bool Deleted { get; private set; }
 
         public ChangeLogItem ChangeLogItem { get; private set; }
 
-        private readonly List<WorkItemChange> _workItemsChanges;
+        private readonly List<WorkItemChange> _workItemsChanges = new();
         public IReadOnlyCollection<WorkItemChange> WorkItemsChanges => _workItemsChanges;
 
-        private readonly List<TimeByState> _timeByState;
+        private readonly List<TimeByState> _timeByState = new();
         public IReadOnlyCollection<TimeByState> TimeByStates => _timeByState;
+
+        private readonly List<WorkItemCustomField> _workItemCustomFields = new();
+        public IReadOnlyCollection<WorkItemCustomField> CustomFields => _workItemCustomFields;
         public string CurrentStatus => _workItemsChanges?.OrderBy(x => x.CreatedAt)?.LastOrDefault()?.NewState;
         public string LastStatus => _workItemsChanges?.OrderBy(x => x.CreatedAt)?.ToList()?.Skip(1)?.LastOrDefault()?.OldState;
 
-        private WorkItem()
-        {
-            _workItemsChanges = new List<WorkItemChange>();
-            _timeByState = new List<TimeByState>();
-        }
+        private WorkItem() { }
 
         public WorkItem(string workItemId) : base(workItemId)
         {
-            _workItemsChanges = new List<WorkItemChange>();
-            _timeByState = new List<TimeByState>();
             Validate();
         }
 
@@ -55,8 +51,7 @@ namespace AzureDevopsTracker.Entities
                            string effort,
                            string storyPoint,
                            string originalEstimate,
-                           string activity,
-                           string lancado)
+                           string activity)
         {
             TeamProject = teamProject;
             AreaPath = areaPath;
@@ -71,7 +66,6 @@ namespace AzureDevopsTracker.Entities
             StoryPoints = storyPoint;
             OriginalEstimate = originalEstimate;
             Activity = activity;
-            Lancado = lancado;
         }
 
         public void Restore()
@@ -87,32 +81,58 @@ namespace AzureDevopsTracker.Entities
         public void Validate()
         {
             if (Id.IsNullOrEmpty())
-                throw new Exception("WorkItemId is required");
+                throw new ArgumentException("WorkItemId is required");
         }
 
         public void AddWorkItemChange(WorkItemChange workItemChange)
         {
-            if (workItemChange == null)
-                throw new Exception("WorkItemChange is null");
+            if (workItemChange is null)
+                throw new ArgumentException("WorkItemChange is null");
 
             _workItemsChanges.Add(workItemChange);
         }
 
         public void AddTimeByState(TimeByState timeByState)
         {
-            if (timeByState == null)
-                throw new Exception("TimeByState is null");
+            if (timeByState is null)
+                throw new ArgumentException("TimeByState is null");
 
             _timeByState.Add(timeByState);
         }
 
         public void AddTimesByState(IEnumerable<TimeByState> timesByState)
         {
-            if (!timesByState.Any())
+            if (timesByState is not null && !timesByState.Any())
                 return;
 
             foreach (var timeByState in timesByState)
                 AddTimeByState(timeByState);
+        }
+
+        public void AddCustomField(WorkItemCustomField customField)
+        {
+            if (customField is null)
+                throw new ArgumentException("CustomField is null");
+
+            _workItemCustomFields.Add(customField);
+        }
+
+        public void AddCustomFields(IEnumerable<WorkItemCustomField> customFields)
+        {
+            if (customFields is null || !customFields.Any())
+                return;
+
+            foreach (var customField in customFields)
+                AddCustomField(customField);
+        }
+
+        public void UpdateCustomFields(IEnumerable<WorkItemCustomField> newCustomFields)
+        {
+            if (newCustomFields is null || !newCustomFields.Any())
+                return;
+
+            _workItemCustomFields.Clear();
+            AddCustomFields(newCustomFields);
         }
 
         public void ClearTimesByState()
@@ -127,8 +147,8 @@ namespace AzureDevopsTracker.Entities
 
         public void VinculateChangeLogItem(ChangeLogItem changeLogItem)
         {
-            if (changeLogItem == null)
-                throw new Exception("ChangeLogItem is null");
+            if (changeLogItem is null)
+                throw new ArgumentException("ChangeLogItem is null");
 
             ChangeLogItem = changeLogItem;
         }
@@ -139,7 +159,7 @@ namespace AzureDevopsTracker.Entities
             if (!_workItemsChanges.Any())
                 return timesByStateList;
 
-            foreach (var workItemChange in _workItemsChanges.OrderBy(x => x.CreatedAt).GroupBy(x => x.OldState).Where(x => x.Key != null))
+            foreach (var workItemChange in _workItemsChanges.OrderBy(x => x.CreatedAt).GroupBy(x => x.OldState).Where(x => x.Key is not null))
             {
                 var totalTime = TimeSpan.Zero;
                 var totalWorkedTime = TimeSpan.Zero;

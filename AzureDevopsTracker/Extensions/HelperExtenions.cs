@@ -11,6 +11,12 @@ namespace AzureDevopsTracker.Extensions
             return string.IsNullOrEmpty(text?.Trim());
         }
 
+        public static string Truncate(this string value, int maxLength = 8000)
+        {
+            if (value.IsNullOrEmpty()) return value;
+            return value.Length <= maxLength ? value : value[..maxLength];
+        }
+
         public static string ExtractEmail(this string user)
         {
             if (user is null)
