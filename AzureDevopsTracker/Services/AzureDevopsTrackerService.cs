@@ -242,6 +242,9 @@ namespace AzureDevopsTracker.Services
 
         public void AddWorkItemChange(WorkItem workItem, UpdatedWorkItemDTO update)
         {
+            if (update.Resource.Fields.State is null) return;
+            if (update.Resource.Fields.StateChangeDate is null) return;
+
             var changedBy = update.Resource.Revision.Fields.ChangedBy ?? update.Resource.Fields.ChangedBy.NewValue;
             var workItemChange = ToWorkItemChange(workItem.Id,
                                       changedBy,
