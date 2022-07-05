@@ -1,0 +1,7 @@
+*.sln @diego-galante @elvissouza
+*.csproj @diego-galante @elvissouza
+*.cs @diego-galante @elvissouza
+
+*.* @diego-galante @elvissouza
+
+.github/ @diego-galante
