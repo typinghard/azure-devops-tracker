@@ -13,18 +13,15 @@ namespace AzureDevopsTracker.Entities
         public IReadOnlyCollection<ChangeLogItem> ChangeLogItems => _changeLogItems;
 
         private ChangeLog() { }
+        public ChangeLog(string number) => Number = number;
         public ChangeLog(int newRevision)
         {
             Revision = newRevision;
             Number = $"{CreatedAt:yyyyMMdd}.{Revision}";
         }
 
-        public ChangeLog(string number) => Number = number;
-
         public void SetResponse(string response) => Response = response;
-
         public void ClearResponse() => Response = string.Empty;
-
         private bool CheckChangeLogItem(ChangeLogItem changeLogItem) => _changeLogItems.Any(x => x.WorkItemId == changeLogItem.WorkItemId);
 
         public void AddChangeLogItem(ChangeLogItem changeLogItem)
@@ -45,9 +42,7 @@ namespace AzureDevopsTracker.Entities
                 throw new Exception("ChangeLogItems is required");
 
             foreach (var changeLogItem in changeLogItems)
-            {
                 AddChangeLogItem(changeLogItem);
-            }
         }
     }
 }
