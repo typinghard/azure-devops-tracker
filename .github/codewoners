@@ -1,7 +1,7 @@
-*.sln @diego-galante @elvissouza
-*.csproj @diego-galante @elvissouza
-*.cs @diego-galante @elvissouza
+*.sln @DiegoGalante @ElvisCSouza
+*.csproj @DiegoGalante @ElvisCSouza
+*.cs @DiegoGalantee @ElvisCSouza
 
-*.* @diego-galante @elvissouza
+*.* @DiegoGalante @ElvisCSouza
 
-.github/ @diego-galante
+.github/ @DiegoGalante
