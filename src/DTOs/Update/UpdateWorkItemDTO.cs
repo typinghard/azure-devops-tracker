@@ -2,9 +2,9 @@
 using System;
 using System.Text.Json.Serialization;
 
-namespace AzureDevopsTracker.DTOs.Update
+namespace AzureDevopsTracker.Dtos.Update
 {
-    public record UpdatedWorkItemDTO
+    public record UpdatedWorkItemDto
     {
         [JsonPropertyName("resource")]
         [JsonProperty("resource")]

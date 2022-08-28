@@ -1,4 +1,4 @@
-﻿using AzureDevopsTracker.DTOs;
+﻿using AzureDevopsTracker.Dtos;
 using AzureDevopsTracker.Entities;
 using AzureDevopsTracker.Extensions;
 using AzureDevopsTracker.Interfaces;
@@ -10,11 +10,11 @@ namespace AzureDevopsTracker.Adapters
 {
     internal class WorkItemAdapter : IWorkItemAdapter
     {
-        public WorkItemDTO ToWorkItemDTO(WorkItem workItem)
+        public WorkItemDto ToWorkItemDto(WorkItem workItem)
         {
             if (workItem is null) return null;
 
-            return new WorkItemDTO()
+            return new WorkItemDto()
             {
                 Id = workItem.Id,
                 CreatedAt = workItem.CreatedAt,
@@ -32,30 +32,30 @@ namespace AzureDevopsTracker.Adapters
                 WorkItemParentId = workItem.WorkItemParentId,
                 Activity = workItem.Activity,
                 Tags = workItem.Tags is null ? new List<string>() : workItem.Tags.Split(';').ToList(),
-                WorkItemsChangesDTO = ToWorkItemsChangeDTO(workItem.WorkItemsChanges.OrderBy(x => x.CreatedAt).ToList()),
-                TimesByStateDTO = ToTimeByStatesDTO(workItem.CalculateTotalTimeByState().ToList()),
+                WorkItemsChangesDto = ToWorkItemsChangeDto(workItem.WorkItemsChanges.OrderBy(x => x.CreatedAt).ToList()),
+                TimesByStateDto = ToTimeByStatesDto(workItem.CalculateTotalTimeByState().ToList()),
             };
         }
 
-        public List<WorkItemDTO> ToWorkItemsDTO(List<WorkItem> workItems)
+        public List<WorkItemDto> ToWorkItemsDto(List<WorkItem> workItems)
         {
-            var workItemsDTO = new List<WorkItemDTO>();
+            var workItemsDto = new List<WorkItemDto>();
 
-            if (workItems is null) return workItemsDTO;
+            if (workItems is null) return workItemsDto;
 
             workItems.ForEach(
                         workItem =>
-                        workItemsDTO.Add(ToWorkItemDTO(workItem)));
+                        workItemsDto.Add(ToWorkItemDto(workItem)));
 
-            return workItemsDTO
+            return workItemsDto
                      .ToList();
         }
 
-        public WorkItemChangeDTO ToWorkItemChangeDTO(WorkItemChange workIteChange)
+        public WorkItemChangeDto ToWorkItemChangeDto(WorkItemChange workIteChange)
         {
             if (workIteChange is null) return null;
 
-            return new WorkItemChangeDTO()
+            return new WorkItemChangeDto()
             {
                 NewDate = workIteChange.NewDate,
                 NewState = workIteChange.NewState,
@@ -65,26 +65,26 @@ namespace AzureDevopsTracker.Adapters
             };
         }
 
-        public List<WorkItemChangeDTO> ToWorkItemsChangeDTO(List<WorkItemChange> workItemsChanges)
+        public List<WorkItemChangeDto> ToWorkItemsChangeDto(List<WorkItemChange> workItemsChanges)
         {
-            var workItemsChangeDTO = new List<WorkItemChangeDTO>();
+            var workItemsChangeDto = new List<WorkItemChangeDto>();
 
-            if (workItemsChanges is null) return workItemsChangeDTO;
+            if (workItemsChanges is null) return workItemsChangeDto;
 
             workItemsChanges.ForEach(
                         workItemsChange =>
-                        workItemsChangeDTO.Add(ToWorkItemChangeDTO(workItemsChange)));
+                        workItemsChangeDto.Add(ToWorkItemChangeDto(workItemsChange)));
 
-            return workItemsChangeDTO
+            return workItemsChangeDto
                      .Where(w => w is not null)
                      .ToList();
         }
 
-        public TimeByStateDTO ToTimeByStateDTO(TimeByState workItemStatusTime)
+        public TimeByStateDto ToTimeByStateDto(TimeByState workItemStatusTime)
         {
             if (workItemStatusTime is null) return null;
 
-            return new TimeByStateDTO()
+            return new TimeByStateDto()
             {
                 CreatedAt = workItemStatusTime.CreatedAt,
                 State = workItemStatusTime.State,
@@ -93,17 +93,17 @@ namespace AzureDevopsTracker.Adapters
             };
         }
 
-        public List<TimeByStateDTO> ToTimeByStatesDTO(List<TimeByState> workItemStatusTimes)
+        public List<TimeByStateDto> ToTimeByStatesDto(List<TimeByState> workItemStatusTimes)
         {
-            var workItemStatusTimeDTO = new List<TimeByStateDTO>();
+            var workItemStatusTimeDto = new List<TimeByStateDto>();
 
-            if (workItemStatusTimes is null) return workItemStatusTimeDTO;
+            if (workItemStatusTimes is null) return workItemStatusTimeDto;
 
             workItemStatusTimes.ForEach(
                         workItemStatusTime =>
-                        workItemStatusTimeDTO.Add(ToTimeByStateDTO(workItemStatusTime)));
+                        workItemStatusTimeDto.Add(ToTimeByStateDto(workItemStatusTime)));
 
-            return workItemStatusTimeDTO
+            return workItemStatusTimeDto
                      .Where(w => w is not null)
                      .ToList();
         }

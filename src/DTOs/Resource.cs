@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Text.Json.Serialization;
 
-namespace AzureDevopsTracker.DTOs
+namespace AzureDevopsTracker.Dtos
 {
     public record Resource
     {
