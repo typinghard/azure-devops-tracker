@@ -29,8 +29,7 @@ steps:
   inputs:
     command: custom
     custom: tool
-    arguments: |
-              'dotnet sonarscanner begin /k:"$(SONAR_PROJECT_KEY)" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="$(SONAR_TOKEN)" /d:sonar.cs.dotcover.reportsPaths=dotCover.Output.html
-               dotnet build –no-incremental
-               dotnet dotcover test --dcReportType=HTML
-               dotnet sonarscanner end /d:sonar.login="$(SONAR_TOKEN)"'
+    arguments: 'dotnet sonarscanner begin /k:"$(SONAR_PROJECT_KEY)" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="$(SONAR_TOKEN)" /d:sonar.cs.dotcover.reportsPaths=dotCover.Output.html
+    dotnet build –no-incremental
+    dotnet dotcover test --dcReportType=HTML
+    dotnet sonarscanner end /d:sonar.login="$(SONAR_TOKEN)"'
