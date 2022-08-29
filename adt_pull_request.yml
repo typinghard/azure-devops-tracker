@@ -17,9 +17,12 @@ steps:
 - script: dotnet tool install --global dotnet-sonarscanner
   displayName: 'Instalando dependência global sonarscanner'
 
+- script: dotnet tool install --global JetBrains.dotCover.GlobalTool
+  displayName: 'Instalando dependência global JetBrains.dotCover.GlobalTool'
+
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
-  
+
 - task: DotNetCoreCLI@2
   displayName: 'Calculate code coverage'
   continueOnError: false
