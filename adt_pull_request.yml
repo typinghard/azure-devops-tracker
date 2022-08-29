@@ -1,73 +1,43 @@
-# ASP.NET Core
-# Build and test ASP.NET Core projects targeting .NET Core.
-# Add steps that run tests, create a NuGet package, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
-#trigger:
-#- version-5
-
 pool:
-  vmImage: 'windows-2019'
+  vmImage: ubuntu-latest
 
 variables:
   buildConfiguration: 'Release'
   prPipeline: $[eq(variables['Build.Reason'], 'PullRequest')]
 
 steps:
-- task: UseDotNet@2
-  displayName: 'Install .NET Core SDK'
+- task: SonarQubePrepare@5  
   inputs:
-    version: 6.x
-    performMultiLevelLookup: true
-    includePreviewVersions: true # Required
-
-#- task: DotNetCoreCLI@2
-#  displayName: Install dotnet-ef
-#  inputs:
-#     command: 'custom'
-#     custom: 'tool'
-#     arguments: 'install --global dotnet-ef'
-
-#- task: DotNetCoreCLI@2
-#  displayName: Check dotnet-ef version
-#  inputs:
-#     command: 'custom'
-#     custom: 'ef'
-#     arguments: '--version'
-
-- task: CmdLine@2
-  displayName: 'Instalando dotnet-ef'
-  inputs:
-    script: 'dotnet tool install --global dotnet-ef' 
-
-- task: CmdLine@2
-  displayName: 'Instalando sonarscanner'
-  inputs:
-    script: 'dotnet tool install --global dotnet-sonarscanner'
-
-- task: CmdLine@2
-  displayName: 'Instalando sonarscanner'
-  inputs:
-    script: 'dotnet tool install --global JetBrains.dotCover.GlobalTool' 
+    SonarQube: 'SonarQube Developer Edition'
+    scannerMode: 'MSBuild'
+    projectKey: '$(SONAR_PROJECT_KEY)'
 
 - task: DotNetCoreCLI@2
-  displayName: Build
-  inputs:
-    command: build
-    projects: '**/*.csproj'
-    arguments: '--configuration $(buildConfiguration)'
-
-- task: DotNetCoreCLI@2
-  displayName: Rodando os testes da aplicação
+  displayName: Test
   inputs:
     command: test
     projects: '**/*[Tt]ests/*.csproj'
     arguments: '--configuration $(BuildConfiguration) --collect "Code Coverage"'
-    
-- task: CmdLine@2
-  displayName: 'Rodando SonarScanner '
+ 
+- task: DotNetCoreCLI@2
+  displayName: 'Calculate code coverage'
+  continueOnError: false
   inputs:
-    script: 'dotnet sonarscanner begin /k:"$(SONAR_PROJECT_KEY)" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="$(SONAR_TOKEN)" /d:sonar.cs.dotcover.reportsPaths=dotCover.Output.html
-    dotnet build –no-incremental
-    dotnet dotcover test --dcReportType=HTML
-    dotnet sonarscanner end /d:sonar.login="$(SONAR_TOKEN)"' 
+    command: test
+    projects: '**/*.Test.csproj'
+    arguments: '/p:CollectCoverage=true /p:CoverletOutput=../TestResults/ /p:CoverletOutputFormat="json%2ccobertura" /p:MergeWith=../TestResults/coverage.json  /m:1'
+    publishTestResults: false
+
+- task: DotNetCoreCLI@2
+  displayName: 'Checkpoint: Total branch coverage >= $(codeCoverageBranchThreshold)'
+  continueOnError: false
+  inputs:
+    command: test
+    projects: '**/*[Tt]ests/*.csproj'
+    arguments: '/p:CollectCoverage=true /p:CoverletOutput=../TestResults/ /p:CoverletOutputFormat="json%2ccobertura" /p:MergeWith=../TestResults/coverage.json /p:ThresholdType=branch /p:Threshold=$(codeCoverageBranchThreshold) /p:ThresholdStat=total'
+    publishTestResults: false
+ 
+- task: SonarQubePublish@5
+  displayName: 'Publishing sonarqube analizys'
+  inputs:
+    pollingTimeoutSec: '300'
