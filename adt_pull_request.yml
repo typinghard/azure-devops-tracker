@@ -17,26 +17,20 @@ steps:
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
 
-- task: UseDotNet@2
-  displayName: 'Install .NET Core SDK'
-  inputs:
-    version: 5.0.x
-    performMultiLevelLookup: true
-    includePreviewVersions: true # Required
-
 - task: DotNetCoreCLI@2
-  displayName: Rodando os testes da aplicação
+  displayName: 'Calculate code coverage'
+  continueOnError: false
   inputs:
     command: test
     projects: '**/*[Tt]ests/*.csproj'
-    arguments: '--configuration $(BuildConfiguration) --collect "Code Coverage"'
-    
+    arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutput=../TestResults/ /p:CoverletOutputFormat="json%2ccobertura" /p:MergeWith=../TestResults/coverage.json  /m:1'
+    publishTestResults: false
+
 - task: DotNetCoreCLI@2
-  displayName: 'Rodando SonarScanner '
+  displayName: 'Checkpoint: Total branch coverage >= $(codeCoverageBranchThreshold)'
+  continueOnError: false
   inputs:
-    command: custom
-    custom: tool
-    arguments: 'dotnet sonarscanner begin /k:"$(SONAR_PROJECT_KEY)" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="$(SONAR_TOKEN)" /d:sonar.cs.dotcover.reportsPaths=dotCover.Output.html
-    dotnet build –no-incremental
-    dotnet dotcover test --dcReportType=HTML
-    dotnet sonarscanner end /d:sonar.login="$(SONAR_TOKEN)"'
+    command: test
+    projects: '**/*[Tt]ests/*.csproj'
+    arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutput=../TestResults/ /p:CoverletOutputFormat="json%2ccobertura" /p:MergeWith=../TestResults/coverage.json /p:ThresholdType=branch /p:Threshold=$(codeCoverageBranchThreshold) /p:ThresholdStat=total'
+    publishTestResults: false
