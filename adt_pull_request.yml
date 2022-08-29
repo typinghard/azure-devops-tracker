@@ -21,7 +21,6 @@ steps:
     performMultiLevelLookup: true
     includePreviewVersions: true # Required
 
-steps:
 - task: DotNetCoreCLI@2
   displayName: Restore
   inputs:
