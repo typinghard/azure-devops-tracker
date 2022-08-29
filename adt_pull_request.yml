@@ -21,11 +21,19 @@ steps:
     performMultiLevelLookup: true
     includePreviewVersions: true # Required
 
-- task: NuGetCommand@2
-  displayName: 'Instalando sonarscanner'
+- task: DotNetCoreCLI@2
+  displayName: Install dotnet-ef
   inputs:
-    command: custom
-    arguments: 'dotnet tool install --global dotnet-ef'
+     command: 'custom'
+     custom: 'tool'
+     arguments: 'install --global dotnet-ef'
+
+- task: DotNetCoreCLI@2
+  displayName: Check dotnet-ef version
+  inputs:
+     command: 'custom'
+     custom: 'ef'
+     arguments: '--version'
 
 - task: NuGetCommand@2
   displayName: 'Instalando sonarscanner'
