@@ -21,12 +21,6 @@ steps:
     performMultiLevelLookup: true
     includePreviewVersions: true # Required
 
-- task: DotNetCoreCLI@2
-  displayName: Restore
-  inputs:
-    command: restore
-    projects: '$(Parameters.RestoreBuildProjects)'
-
 - task: NuGetCommand@2
   displayName: 'Instalando sonarscanner'
   inputs:
