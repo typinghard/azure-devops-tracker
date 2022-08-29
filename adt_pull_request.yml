@@ -40,14 +40,14 @@ steps:
   inputs:
     command: 'custom'
     custom: 'tool'
-    arguments: 'install --global dotnet-sonarscanner'
+    arguments: 'install dotnet-sonarscanner'
 
 - task: NuGetCommand@2
   displayName: 'Instalando dotCover'
   inputs:
     command: custom
     custom: 'tool'
-    arguments: 'install --global JetBrains.dotCover.GlobalTool'
+    arguments: 'install JetBrains.dotCover.GlobalTool'
 
 - task: DotNetCoreCLI@2
   displayName: Build
