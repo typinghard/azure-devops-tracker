@@ -21,6 +21,15 @@ steps:
     performMultiLevelLookup: true
     includePreviewVersions: true # Required
 
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet restore'
+  inputs:
+    command: 'restore'
+    feedsToUse: 'select'
+    feedRestore: 'projectName/feedName'
+    projects: '**/*.csproj'
+    includeNuGetOrg: true
+
 - task: NuGetCommand@2
   displayName: 'Instalando sonarscanner'
   inputs:
