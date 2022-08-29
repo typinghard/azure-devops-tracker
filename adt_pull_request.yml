@@ -22,6 +22,13 @@ steps:
     includePreviewVersions: true # Required
 
 - task: DotNetCoreCLI@2
+  displayName: 'Install sonarscanner'
+  inputs:
+    command: custom
+    custom: tool
+    arguments: 'dotnet tool install --global dotnet-sonarscanner'
+
+- task: DotNetCoreCLI@2
   displayName: Build
   inputs:
     command: build
