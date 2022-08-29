@@ -39,22 +39,16 @@ steps:
   displayName: 'Instalando dotnet-ef'
   inputs:
     script: 'dotnet tool install --global dotnet-ef' 
-    #workingDirectory: # Optional
-    #failOnStderr: false # Optional
 
 - task: CmdLine@2
   displayName: 'Instalando sonarscanner'
   inputs:
-    script: 'dotnet tool install --global dotnet-sonarscanner' 
-    #workingDirectory: # Optional
-    #failOnStderr: false # Optional
-	
+    script: 'dotnet tool install --global dotnet-sonarscanner'
+
 - task: CmdLine@2
   displayName: 'Instalando sonarscanner'
   inputs:
     script: 'dotnet tool install --global JetBrains.dotCover.GlobalTool' 
-    #workingDirectory: # Optional
-    #failOnStderr: false # Optional
 
 - task: DotNetCoreCLI@2
   displayName: Build
