@@ -35,23 +35,5 @@ steps:
     arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutput=../TestResults/ /p:CoverletOutputFormat="json%2ccobertura" /p:MergeWith=../TestResults/coverage.json /p:ThresholdType=branch /p:Threshold=$(codeCoverageBranchThreshold) /p:ThresholdStat=total'
     publishTestResults: false
 
-- task: DotNetCoreCLI@2
+- script: dotnet sonarscanner begin /k:"$(SONAR_PROJECT_KEY)" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="$(SONAR_TOKEN)" /d:sonar.cs.dotcover.reportsPaths=.\TestResults\coverage.json dotnet build –no-incremental dotnet sonarscanner end /d:sonar.login="$(SONAR_TOKEN)"
   displayName: 'Rodando SonarScanner '
-  inputs:
-    command: custom
-    custom: tool
-    arguments: 'sonarscanner begin /k:"$(SONAR_PROJECT_KEY)" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="$(SONAR_TOKEN)" /d:sonar.cs.dotcover.reportsPaths=.\TestResults\coverage.json'
-
-- task: DotNetCoreCLI@2
-  displayName: 'Rodando SonarScanner '
-  inputs:
-    command: custom
-    custom: tool
-    arguments: 'dotnet build –no-incremental'
-
-- task: DotNetCoreCLI@2
-  displayName: 'Rodando SonarScanner '
-  inputs:
-    command: custom
-    custom: tool
-    arguments: 'sonarscanner end /d:sonar.login="$(SONAR_TOKEN)"'
