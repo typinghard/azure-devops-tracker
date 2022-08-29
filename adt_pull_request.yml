@@ -25,8 +25,7 @@ steps:
   displayName: Restore
   inputs:
     command: restore
-    projects: '**/*.csproj'
-    feedsToUse: config
+    projects: '$(Parameters.RestoreBuildProjects)'
 
 - task: NuGetCommand@2
   displayName: 'Instalando sonarscanner'
