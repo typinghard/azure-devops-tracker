@@ -13,19 +13,12 @@ steps:
     projectKey: '$(SONAR_PROJECT_KEY)'
 
 - task: DotNetCoreCLI@2
-  displayName: Test
-  inputs:
-    command: test
-    projects: '**/*[Tt]ests/*.csproj'
-    arguments: '--configuration $(BuildConfiguration) --collect "Code Coverage"'
- 
-- task: DotNetCoreCLI@2
   displayName: 'Calculate code coverage'
   continueOnError: false
   inputs:
     command: test
-    projects: '**/*.Test.csproj'
-    arguments: '/p:CollectCoverage=true /p:CoverletOutput=../TestResults/ /p:CoverletOutputFormat="json%2ccobertura" /p:MergeWith=../TestResults/coverage.json  /m:1'
+    projects: '**/*[Tt]ests/*.csproj'
+    arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutput=../TestResults/ /p:CoverletOutputFormat="json%2ccobertura" /p:MergeWith=../TestResults/coverage.json  /m:1'
     publishTestResults: false
 
 - task: DotNetCoreCLI@2
@@ -34,9 +27,9 @@ steps:
   inputs:
     command: test
     projects: '**/*[Tt]ests/*.csproj'
-    arguments: '/p:CollectCoverage=true /p:CoverletOutput=../TestResults/ /p:CoverletOutputFormat="json%2ccobertura" /p:MergeWith=../TestResults/coverage.json /p:ThresholdType=branch /p:Threshold=$(codeCoverageBranchThreshold) /p:ThresholdStat=total'
+    arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutput=../TestResults/ /p:CoverletOutputFormat="json%2ccobertura" /p:MergeWith=../TestResults/coverage.json /p:ThresholdType=branch /p:Threshold=$(codeCoverageBranchThreshold) /p:ThresholdStat=total'
     publishTestResults: false
- 
+
 - task: SonarQubePublish@5
   displayName: 'Publishing sonarqube analizys'
   inputs:
