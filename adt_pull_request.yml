@@ -40,4 +40,18 @@ steps:
   inputs:
     command: custom
     custom: tool
-    arguments: 'dotnet sonarscanner begin /k:"$(SONAR_PROJECT_KEY)" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="$(SONAR_TOKEN)" /d:sonar.cs.dotcover.reportsPaths=.\TestResults\coverage.json dotnet build –no-incremental dotnet sonarscanner end /d:sonar.login="$(SONAR_TOKEN)"'
+    arguments: 'sonarscanner begin /k:"$(SONAR_PROJECT_KEY)" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="$(SONAR_TOKEN)" /d:sonar.cs.dotcover.reportsPaths=.\TestResults\coverage.json'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Rodando SonarScanner '
+  inputs:
+    command: custom
+    custom: tool
+    arguments: 'dotnet build –no-incremental'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Rodando SonarScanner '
+  inputs:
+    command: custom
+    custom: tool
+    arguments: 'sonarscanner end /d:sonar.login="$(SONAR_TOKEN)"'
