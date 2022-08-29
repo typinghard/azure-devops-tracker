@@ -40,7 +40,7 @@ steps:
   inputs:
     command: 'custom'
     custom: 'tool'
-    arguments: 'install dotnet-sonarscanner'
+    arguments: 'install --global dotnet-sonarscanner --version 5.8.0'
 
 - task: NuGetCommand@2
   displayName: 'Instalando dotCover'
