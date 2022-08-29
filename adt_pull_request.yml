@@ -21,7 +21,7 @@ steps:
     performMultiLevelLookup: true
     includePreviewVersions: true # Required
 
--task: NuGetCommand@2
+- task: NuGetCommand@2
   displayName: 'Instalando sonarscanner'
   inputs:
     command: custom
