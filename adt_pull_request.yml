@@ -7,7 +7,7 @@
 #- version-5
 
 pool:
-  vmImage: windows-latest
+  vmImage: 'ubuntu-18.04'
 
 variables:
   buildConfiguration: 'Release'
@@ -21,14 +21,13 @@ steps:
     performMultiLevelLookup: true
     includePreviewVersions: true # Required
 
+steps:
 - task: DotNetCoreCLI@2
-  displayName: 'dotnet restore'
+  displayName: Restore
   inputs:
-    command: 'restore'
-    feedsToUse: 'select'
-    feedRestore: 'projectName/feedName'
+    command: restore
     projects: '**/*.csproj'
-    includeNuGetOrg: true
+    feedsToUse: config
 
 - task: NuGetCommand@2
   displayName: 'Instalando sonarscanner'
