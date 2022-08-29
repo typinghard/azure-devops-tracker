@@ -21,11 +21,16 @@ steps:
     performMultiLevelLookup: true
     includePreviewVersions: true # Required
 
-- task: DotNetCoreCLI@2
-  displayName: 'Install sonarscanner'
+-task: NuGetCommand@2
+  displayName: 'Instalando sonarscanner'
   inputs:
     command: custom
-    custom: tool
+    arguments: 'dotnet tool install --global dotnet-sonarscanner'
+
+- task: NuGetCommand@2
+  displayName: 'Instalando dotCover'
+  inputs:
+    command: custom
     arguments: 'dotnet tool install --global JetBrains.dotCover.GlobalTool'
 
 - task: DotNetCoreCLI@2
