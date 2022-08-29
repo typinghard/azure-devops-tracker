@@ -26,7 +26,7 @@ steps:
   inputs:
     command: custom
     custom: tool
-    arguments: 'dotnet tool install --global dotnet-sonarscanner --version 5.8.0'
+    arguments: 'dotnet tool install dotnet-sonarscanner --version 5.8.0'
 
 - task: DotNetCoreCLI@2
   displayName: Build
