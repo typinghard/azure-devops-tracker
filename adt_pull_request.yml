@@ -13,7 +13,7 @@ steps:
      # Additional properties that will be passed to the scanner, 
      # Put one key=value per line, example:
      # sonar.exclusions=**/*.bin
-     sonar.coverageReportPaths=$(Build.SourcesDirectory)/coverlet/reports/Summary.xml
+     sonar.coverageReportPaths=$(Build.SourcesDirectory)/coverlet/reports/Cobertura.xsd
 
 - task: CmdLine@2
   inputs:
@@ -38,7 +38,7 @@ steps:
   inputs:
     reports: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
     targetdir: '$(Build.SourcesDirectory)/coverlet/reports'
-    reporttypes: 'HtmlInline_AzurePipelines;Cobertura;Badges;Xml'
+    reporttypes: 'HtmlInline_AzurePipelines;Cobertura;Badges;Xml;XSD;Clover'
     assemblyfilters: '-xunit\*'
 
 - task: PublishCodeCoverageResults@1
