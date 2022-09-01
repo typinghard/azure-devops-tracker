@@ -46,7 +46,7 @@ steps:
 #    reports: '$(Agent.TempDirectory)/coverage.cobertura.xml'
 #    targetdir: '$(Build.SourcesDirectory)/reports'
 #    reporttypes: 'SonarQube'
-3    assemblyfilters: '-xunit\*'
+#    assemblyfilters: '-xunit\*'
 
 - task: PublishCodeCoverageResults@1
   displayName: 'Publish code coverage from $(Build.SourcesDirectory)/reports/coverage.cobertura.xml'
