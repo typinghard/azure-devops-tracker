@@ -14,9 +14,11 @@ steps:
      # Put one key=value per line, example:
      # sonar.exclusions=**/*.bin
      #sonar.coverageReportPaths=$(Agent.TempDirectory)/**/*.trx
-     sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/**/*.trx
+     #sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/**/*.trx
      #sonar.coverageReportPaths=$(Agent.TempDirectory)/reports/SonarQube.xml
      #sonar.cs.dotcover.reportsPaths=$(Agent.TempDirectory)/reports/DetailedXML.xml
+     sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/coverage.opencover.xml
+     sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/**/*.trx
 
 - task: CmdLine@2
   inputs:
