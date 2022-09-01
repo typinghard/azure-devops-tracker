@@ -1,60 +1,62 @@
 pool:
-  vmImage: windows-latest
+  name: Azure Pipelines
+  demands: java
 
-variables:
-  buildConfiguration: 'Release'
-  prPipeline: $[eq(variables['Build.Reason'], 'PullRequest')]
+#Your build pipeline references an undefined variable named ‘Parameters.RestoreBuildProjects’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘Parameters.RestoreBuildProjects’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references the ‘BuildConfiguration’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
+#Your build pipeline references the ‘BuildConfiguration’ variable, which you’ve selected to be settable at queue time. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
 
 steps:
-- task: SonarQubePrepare@5
+- task: DotNetCoreCLI@2
+  displayName: Restore
   inputs:
-    SonarQube: 'SonarQube Developer Edition'
-    scannerMode: 'MSBuild'
-    projectKey: '$(SONAR_PROJECT_KEY)'
+    command: restore
+    projects: '$(Parameters.RestoreBuildProjects)'
+
+- task: SonarSource.sonarcloud.14d9cde6-c1da-4d55-aa01-2965cd301255.SonarCloudPrepare@1
+  displayName: 'Prepare analysis on SonarCloud'
+  inputs:
+    SonarCloud: 'SonarCloud-ADT'
+    organization: typinghard
+    projectKey: 'typinghard_azure-devops-tracker'
     extraProperties: |
-      # Additional properties that will be passed to the scanner, 
-      # Put one key=value per line, example:
-      # sonar.exclusions=**/*.bin
-      sonar.cs.vscoveragexml.reportsPaths=**/CodeCoverage/Cobertura.xml
+     # Additional properties that will be passed to the scanner, 
+     # Put one key=value per line, example:
+     # sonar.exclusions=**/*.bin
+     sonar.cs.vscoveragexml.reportsPaths=$(Build.SourcesDirectory)/tests/\*\*/coverage.cobertura.xml
 
-- task: CmdLine@2
+- task: DotNetCoreCLI@2
+  displayName: Build
   inputs:
-    script: dotnet build --no-incremental
-  displayName: 'Rodando dotnet build'
+    projects: '$(Parameters.RestoreBuildProjects)'
+    arguments: '--configuration $(BuildConfiguration)'
 
-# Test with Coverage
-# Run all tests with "/p:CollectCoverage=true /p:CoverletOutputFormat=cobertura" to generate the code coverage file
 - task: DotNetCoreCLI@2
   displayName: 'Calculate code coverage'
-  continueOnError: false
   inputs:
     command: test
-    arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
     projects: '**/*[Tt]ests/*.csproj'
-    nobuild: true
+    arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
 
-- task: reportgenerator@5
+- task: Palmmedia.reportgenerator.reportgenerator-build-release-task.reportgenerator@5
   displayName: ReportGenerator
   inputs:
     reports: '$(Build.SourcesDirectory)/tests/\*\*/coverage.cobertura.xml'
     targetdir: '$(Build.SourcesDirectory)/CodeCoverage'
     reporttypes: 'HtmlInline\_AzurePipelines;Cobertura;Badges'
     assemblyfilters: '-xunit\*'
+    customSettings: assemblyfilters
 
-# Publish the code coverage result (summary and web site)
-# The summary allows to view the coverage percentage in the summary tab
-# The web site allows to view which lines are covered directly in Azure Pipeline
 - task: PublishCodeCoverageResults@1
-  displayName: 'Publish code coverage'
+  displayName: 'Publish code coverage from $(Build.SourcesDirectory)/tests/\*\*/coverage.cobertura.xml'
   inputs:
     codeCoverageTool: Cobertura
-    summaryFileLocation: '$(Build.SourcesDirectory)/CodeCoverage/Cobertura.xml'
-    reportDirectory: '$(Build.SourcesDirectory)/CodeCoverage'
+    summaryFileLocation: '$(Build.SourcesDirectory)/tests/\*\*/coverage.cobertura.xml'
 
-- task: SonarQubeAnalyze@5
-  displayName: 'Run SonarCloud analysis'
+- task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
+  displayName: 'Run Code Analysis'
 
-- task: SonarQubePublish@5
-  displayName: 'Publish sonarqube analysis'
-  inputs:
-    pollingTimeoutSec: '300'
+- task: SonarSource.sonarcloud.38b27399-a642-40af-bb7d-9971f69712e8.SonarCloudPublish@1
+  displayName: 'Publish Quality Gate Result'
+
