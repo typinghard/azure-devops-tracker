@@ -15,11 +15,10 @@ steps:
      # sonar.exclusions=**/*.bin
      sonar.cs.vscoveragexml.reportsPaths=$(Build.SourcesDirectory)/tests/\*\*/coverage.cobertura.xml
 
-- task: DotNetCoreCLI@2
-  displayName: Build
+- task: CmdLine@2
   inputs:
-    projects: '$(Parameters.RestoreBuildProjects)'
-    arguments: '--configuration $(BuildConfiguration)'
+    script: dotnet build --no-incremental
+  displayName: 'Rodando dotnet build'
 
 - task: DotNetCoreCLI@2
   displayName: 'Calculate code coverage'
