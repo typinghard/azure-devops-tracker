@@ -28,7 +28,7 @@ steps:
     command: test
     projects: '**/*[Tt]ests/*.csproj'
     arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --collect "Code Coverage"'
-    targetdir: '$(Build.SourcesDirectory)/coverlet/reports'
+    targetdir: '$(Build.SourcesDirectory)/reports'
     reporttypes: 'HtmlInline_AzurePipelines;Xml;Html;Clover;Cobertura;SonarQube'
 
 #- script: 'dotnet tool install --global dotnet-reportgenerator-globaltool --version 4.5.8'  
