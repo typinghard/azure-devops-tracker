@@ -13,7 +13,7 @@ steps:
      # Additional properties that will be passed to the scanner, 
      # Put one key=value per line, example:
      # sonar.exclusions=**/*.bin
-     sonar.coverageReportPaths=./sonarqubecoverage/SonarQube.xml
+     sonar.coverageReportPaths='$(Build.SourcesDirectory)/**/sonarqubecoverage/SonarQube.xml
 
 - task: CmdLine@2
   inputs:
@@ -42,10 +42,10 @@ steps:
 #    #assemblyfilters: '-xunit\*'
 
 - task: PublishCodeCoverageResults@1
-  displayName: 'Publish code coverage from $(Build.SourcesDirectory)/**/TestResults/*/coverage.cobertura.xml'
+  displayName: 'Publish code coverage from $(Build.SourcesDirectory)/**/SonarQube.xml'
   inputs:
     codeCoverageTool: Cobertura
-    summaryFileLocation: '$(Build.SourcesDirectory)/**/TestResults/*/Cobertura.xml'
+    summaryFileLocation: '$(Build.SourcesDirectory)/**/SonarQube.xml'
 
 - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
   displayName: 'Run Code Analysis'
