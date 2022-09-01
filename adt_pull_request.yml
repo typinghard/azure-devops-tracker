@@ -14,22 +14,54 @@ variables:
   prPipeline: $[eq(variables['Build.Reason'], 'PullRequest')]
 
 steps:
-- script: dotnet build --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
+- task: SonarQubePrepare@5
+  inputs:
+    SonarQube: 'SonarQube Developer Edition'
+    scannerMode: 'MSBuild'
+    projectKey: '$(SONAR_PROJECT_KEY)'
+    extraProperties: |
+      # Additional properties that will be passed to the scanner, 
+      # Put one key=value per line, example:
+      # sonar.exclusions=**/*.bin
+      sonar.cs.vscoveragexml.reportsPaths=**/CodeCoverage/Cobertura.xml
 
+- task: CmdLine@2
+  inputs:
+    script: dotnet build --no-incremental
+  displayName: 'Rodando dotnet build'
+
+# Test with Coverage
+# Run all tests with "/p:CollectCoverage=true /p:CoverletOutputFormat=cobertura" to generate the code coverage file
 - task: DotNetCoreCLI@2
-  displayName: Rodando os testes da aplicaÃ§Ã£o
+  displayName: Rodando os testes da aplicação
   inputs:
     command: test
+    arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
     projects: '**/*[Tt]ests/*.csproj'
-    arguments: '--configuration $(BuildConfiguration) --collect "Code Coverage"'
-    
-- task: DotNetCoreCLI@2
-  displayName: 'Rodando SonarScanner '
+    nobuild: true
+
+- task: reportgenerator@5
+  displayName: ReportGenerator
   inputs:
-    command: custom
-    custom: tool
-    arguments: 'dotnet sonarscanner begin /k:"$(SONAR_PROJECT_KEY)" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="$(SONAR_TOKEN)" /d:sonar.cs.dotcover.reportsPaths=dotCover.Output.html
-    dotnet build â€“no-incremental
-    dotnet dotcover test --dcReportType=HTML
-    dotnet sonarscanner end /d:sonar.login="$(SONAR_TOKEN)"'
+    reports: '$(Build.SourcesDirectory)/tests/\*\*/coverage.cobertura.xml'
+    targetdir: '$(Build.SourcesDirectory)/CodeCoverage'
+    reporttypes: 'HtmlInline\_AzurePipelines;Cobertura;Badges'
+    assemblyfilters: '-xunit\*'
+
+# Publish the code coverage result (summary and web site)
+# The summary allows to view the coverage percentage in the summary tab
+# The web site allows to view which lines are covered directly in Azure Pipeline
+- task: PublishCodeCoverageResults@1
+  displayName: 'Publish code coverage'
+  inputs:
+    codeCoverageTool: Cobertura
+    summaryFileLocation: '$(Build.SourcesDirectory)/CodeCoverage/Cobertura.xml'
+    reportDirectory: '$(Build.SourcesDirectory)/CodeCoverage'
+
+- task: SonarQubeAnalyze@5
+  displayName: 'Run SonarCloud analysis'
+
+- task: SonarQubePublish@5
+  displayName: 'Publish sonarqube analysis'
+  inputs:
+    pollingTimeoutSec: '300'
