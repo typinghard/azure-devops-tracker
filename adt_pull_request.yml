@@ -30,7 +30,7 @@ steps:
 - script: 'dotnet tool install --global dotnet-reportgenerator-globaltool --version 4.5.8'  
   displayName: 'Install ReportGenerator tool'  
 
-- script: 'reportgenerator -reports:$(Agent.TempDirectory)/**/TestResults/*/coverage.cobertura.xml -targetdir:sonarqubecoverage -reporttypes:"SonarQube;Cobertura"'  
+- script: 'reportgenerator -reports:$(Agent.TempDirectory)/TestResults/*/coverage.cobertura.xml -targetdir:sonarqubecoverage -reporttypes:"SonarQube;Cobertura"'  
   displayName: 'Create reports'
   
 #- task: Palmmedia.reportgenerator.reportgenerator-build-release-task.reportgenerator@5
