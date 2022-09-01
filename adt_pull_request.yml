@@ -27,7 +27,7 @@ steps:
   inputs:
     command: test
     projects: '**/*[Tt]ests/*.csproj'
-    arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --collect "Code Coverage" --output $(Build.ArtifactStagingDirectory)/reports'
+    arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --collect "Code Coverage"'
     targetdir: '$(Build.SourcesDirectory)/coverlet/reports'
     reporttypes: 'HtmlInline_AzurePipelines;Xml;Html;Clover;Cobertura;SonarQube'
 
