@@ -26,6 +26,7 @@ steps:
     command: test
     projects: '**/*[Tt]ests/*.csproj'
     arguments: '--configuration $(BuildConfiguration) --collect "XPlat Code coverage" --output $(Build.ArtifactStagingDirectory)/coverlet/reports'
+    targetdir: '$(Build.SourcesDirectory)/coverlet/reports'
 
 - script: 'dotnet tool install --global dotnet-reportgenerator-globaltool --version 4.5.8'  
   displayName: 'Install ReportGenerator tool'  
