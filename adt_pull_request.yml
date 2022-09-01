@@ -13,36 +13,27 @@ steps:
      # Additional properties that will be passed to the scanner, 
      # Put one key=value per line, example:
      # sonar.exclusions=**/*.bin
-     ##sonar.coverageReportPaths=$(Agent.TempDirectory)/coverlet/reports/Cobertura.xml
-     sonar.cs.dotcover.reportsPaths=$(Agent.TempDirectory)/coverlet/reports/SonarQube.xml
+     sonar.coverageReportPaths=$(Build.SourcesDirectory)/results/coverage.cobertura.xml
+     #sonar.cs.dotcover.reportsPaths=$(Agent.TempDirectory)/coverlet/reports/SonarQube.xml
 
-- task: CmdLine@2
+- script: dotnet build --configuration $(buildConfiguration)
+  displayName: 'dotnet build $(buildConfiguration)'
+- script: |
+    mkdir $(Build.SourcesDirectory)\results
+    dotnet teste --logger trx /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura  **/*[Tt]ests/*.csproj
+    copy $(Agent.TempDirectory)\coverage.cobertura.xml $(Build.SourcesDirectory)\results
+    dotnet tool install dotnet-reportgenerator-globaltool --tool-path . --version 4.0.0-rc4
+    .\reportgenerator "-reports:$(Agent.TempDirectory)\coverage.cobertura.xml" "-targetdir:results" "-reporttypes:HTMLInline;HTMLChart"
+  displayName: 'Unit testing'
+- task: PublishTestResults@2
   inputs:
-    script: dotnet build --no-incremental
-  displayName: 'Rodando dotnet build'
-
-- task: DotNetCoreCLI@2
-  displayName: 'Rodando dotnet test'
+    testRunner: VSTest
+    testResultsFiles: '**/*.trx'
+- task: PublishCodeCoverageResults@1
   inputs:
-    command: test
-    projects: '**/*[Tt]ests/*.csproj'
-    arguments: '--configuration $(BuildConfiguration) --collect "XPlat Code coverage" --output $(Build.ArtifactStagingDirectory)/coverlet/reports'
-    targetdir: '$(Build.SourcesDirectory)/coverlet/reports'
-    reporttypes: 'HtmlInline_AzurePipelines;Xml;Html;Clover;Cobertura;SonarQube'
-
-#- script: 'dotnet tool install --global dotnet-reportgenerator-globaltool --version 4.5.8'  
-#  displayName: 'Install ReportGenerator tool'  
-
-#- script: 'reportgenerator -reports:$(Agent.TempDirectory)/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/coverlet/reports -reporttypes:"Cobertura"'  
-#  displayName: 'Create reports'
-
-- task: Palmmedia.reportgenerator.reportgenerator-build-release-task.reportgenerator@5
-  displayName: ReportGenerator
-  inputs:
-    reports: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
-    targetdir: '$(Build.SourcesDirectory)/coverlet/reports'
-    reporttypes: 'HtmlInline_AzurePipelines;Xml;Html;Clover;Cobertura;SonarQube'
-    assemblyfilters: '-xunit\*'
+    summaryFileLocation: $(Build.SourcesDirectory)\results\coverage.cobertura.xml
+    reportDirectory: $(Build.SourcesDirectory)\results
+    codecoverageTool: cobertura
 
 - task: PublishCodeCoverageResults@1
   displayName: 'Publish code coverage from $(Build.SourcesDirectory)/coverlet/reports/coverage.cobertura.xml'
