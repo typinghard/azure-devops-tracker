@@ -22,6 +22,7 @@ steps:
      sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)\**\*.trx
      sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)\**\*.trx
      sonar.cs.vscoveragexml.reportsPaths=$(Agent.TempDirectory)\**\*.coveragexml
+     sonar.cs.vscoveragexml.reportsPaths=coverage.xml
      sonar.verbose=true
 
 - task: CmdLine@2
@@ -36,11 +37,14 @@ steps:
     projects: '**/*[Tt]ests/*.csproj'
     arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --collect "Code Coverage"'
 
-#- script: 'dotnet tool install --global dotnet-reportgenerator-globaltool --version 4.5.8'  
-#  displayName: 'Install ReportGenerator tool'  
+- script: 'dotnet tool install --global coverlet.console'  
+  displayName: 'Install coverlet tool'  
 
 #- script: 'reportgenerator -reports:$(Agent.TempDirectory)/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/coverlet/reports -reporttypes:"Cobertura"'  
 #  displayName: 'Create reports'
+
+- script: dotnet-coverage collect 'dotnet test' -f xml  -o 'coverage.xml'
+  displayName: 'Run dotnet-coverage'  
 
 - task: PublishTestResults@2
   inputs:
