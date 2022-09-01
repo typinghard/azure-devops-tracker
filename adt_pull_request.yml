@@ -25,7 +25,7 @@ steps:
   inputs:
     command: test
     projects: '**/*[Tt]ests/*.csproj'
-    arguments: '--configuration $(BuildConfiguration) --collect "XPlat Code coverage"'
+    arguments: '--configuration $(BuildConfiguration) --collect "XPlat Code coverage" /p:CoverletOutputFormat=opencover'
 
 - script: 'dotnet tool install --global dotnet-reportgenerator-globaltool --version 4.5.8'  
   displayName: 'Install ReportGenerator tool'  
@@ -38,7 +38,7 @@ steps:
   inputs:
     reports: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
     targetdir: '$(Build.SourcesDirectory)/coverlet/reports'
-    reporttypes: 'HtmlInline_AzurePipelines;Cobertura;Badges;Xml;Clover'
+    reporttypes: 'HtmlInline_AzurePipelines;Cobertura;Badges;Xml;Clover;Opencover'
     assemblyfilters: '-xunit\*'
 
 - task: PublishCodeCoverageResults@1
