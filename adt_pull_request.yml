@@ -1,11 +1,3 @@
-# ASP.NET Core
-# Build and test ASP.NET Core projects targeting .NET Core.
-# Add steps that run tests, create a NuGet package, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
-#trigger:
-#- version-5
-
 pool:
   vmImage: windows-latest
 
@@ -33,7 +25,8 @@ steps:
 # Test with Coverage
 # Run all tests with "/p:CollectCoverage=true /p:CoverletOutputFormat=cobertura" to generate the code coverage file
 - task: DotNetCoreCLI@2
-  displayName: Rodando os testes da aplicação
+  displayName: 'Calculate code coverage'
+  continueOnError: false
   inputs:
     command: test
     arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
