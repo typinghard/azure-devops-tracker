@@ -13,7 +13,8 @@ steps:
      # Additional properties that will be passed to the scanner, 
      # Put one key=value per line, example:
      # sonar.exclusions=**/*.bin
-     sonar.cs.vscoveragexml.reportsPaths=$(Build.SourcesDirectory)/coverlet/reports/Cobertura.xml
+     sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/coverlet/reports/coverage.cobertura.xml
+     sonar.coverage.jacoco.xmlReportPaths=$(Build.SourcesDirectory)/coverlet/reports/coverage.cobertura.xml
 
 - task: CmdLine@2
   inputs:
