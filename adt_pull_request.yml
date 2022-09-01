@@ -29,6 +29,11 @@ steps:
 
 - task: Palmmedia.reportgenerator.reportgenerator-build-release-task.reportgenerator@5
   displayName: ReportGenerator
+  inputs:
+    reports: '$(Build.SourcesDirectory)/**/*[Tt]ests/coverage.cobertura.xml'
+    targetdir: '$(Build.SourcesDirectory)/CodeCoverage'
+    reporttypes: 'HtmlInline_AzurePipelines;Cobertura;Badges'
+    assemblyfilters: '-xunit\*'
 
 - task: PublishCodeCoverageResults@1
   displayName: 'Publish code coverage from $(Build.SourcesDirectory)/CodeCoverage/coverage.cobertura.xml'
