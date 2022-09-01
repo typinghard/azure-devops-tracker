@@ -13,7 +13,7 @@ steps:
      # Additional properties that will be passed to the scanner, 
      # Put one key=value per line, example:
      # sonar.exclusions=**/*.bin
-     sonar.cs.vscoveragexml.reportsPaths=$(Build.SourcesDirectory)/tests/\*\*/coverage.cobertura.xml
+     sonar.cs.vscoveragexml.reportsPaths=$(Build.SourcesDirectory)/**/*[Tt]ests/**/coverage.cobertura.xml
 
 - task: CmdLine@2
   inputs:
@@ -30,17 +30,17 @@ steps:
 - task: Palmmedia.reportgenerator.reportgenerator-build-release-task.reportgenerator@5
   displayName: ReportGenerator
   inputs:
-    reports: '$(Build.SourcesDirectory)/tests/\*\*/coverage.cobertura.xml'
+    reports: '$(Build.SourcesDirectory)//**/*[Tt]ests/**/coverage.cobertura.xml'
     targetdir: '$(Build.SourcesDirectory)/CodeCoverage'
     reporttypes: 'HtmlInline\_AzurePipelines;Cobertura;Badges'
     assemblyfilters: '-xunit\*'
     customSettings: assemblyfilters
 
 - task: PublishCodeCoverageResults@1
-  displayName: 'Publish code coverage from $(Build.SourcesDirectory)/tests/\*\*/coverage.cobertura.xml'
+  displayName: 'Publish code coverage from $(Build.SourcesDirectory)/**/*[Tt]ests/**/coverage.cobertura.xml'
   inputs:
     codeCoverageTool: Cobertura
-    summaryFileLocation: '$(Build.SourcesDirectory)/tests/\*\*/coverage.cobertura.xml'
+    summaryFileLocation: '$(Build.SourcesDirectory)/**/*[Tt]ests/**/coverage.cobertura.xml'
 
 - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
   displayName: 'Run Code Analysis'
