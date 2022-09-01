@@ -16,6 +16,14 @@ steps:
      #sonar.coverageReportPaths=$(Agent.TempDirectory)/coverlet/reports/coverage.cobertura.xml
      sonar.cs.dotcover.reportsPaths=dotCover.Output.html
 
+- script: dotnet tool install --global JetBrains.dotCover.GlobalTool
+  displayName: 'Instalando ferramenta global JetBrains.dotCover.GlobalTool'
+
+- task: CmdLine@2
+  inputs:
+    script: dotnet restore
+  displayName: 'Rodando dotnet restore'
+
 - task: CmdLine@2
   inputs:
     script: dotnet build --no-incremental
@@ -35,9 +43,6 @@ steps:
 
 #- script: 'reportgenerator -reports:$(Agent.TempDirectory)/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/coverlet/reports -reporttypes:"Cobertura"'  
 #  displayName: 'Create reports'
-
-- script: dotnet tool install --global JetBrains.dotCover.GlobalTool
-  displayName: 'Instalando ferramenta global JetBrains.dotCover.GlobalTool'
 
 - script: dotnet dotcover test --dcReportType=HTML
   displayName: 'Rodando dotcover'
