@@ -13,8 +13,9 @@ steps:
      # Additional properties that will be passed to the scanner, 
      # Put one key=value per line, example:
      # sonar.exclusions=**/*.bin
-     sonar.coverageReportPaths=$(Agent.TempDirectory)/coverlet/reports/SonarQube.xml
-     #sonar.cs.dotcover.reportsPaths=$(Agent.TempDirectory)/coverlet/reports/DetailedXML.xml
+     sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/**/*.trx
+     #sonar.coverageReportPaths=$(Agent.TempDirectory)/reports/SonarQube.xml
+     #sonar.cs.dotcover.reportsPaths=$(Agent.TempDirectory)/reports/DetailedXML.xml
 
 - task: CmdLine@2
   inputs:
@@ -26,8 +27,8 @@ steps:
   inputs:
     command: test
     projects: '**/*[Tt]ests/*.csproj'
-    arguments: '--configuration $(BuildConfiguration) --collect "XPlat Code coverage" --output $(Build.ArtifactStagingDirectory)/coverlet/reports'
-    targetdir: '$(Build.SourcesDirectory)/coverlet/reports'
+    arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --collect "Code Coverage"'
+    targetdir: '$(Build.SourcesDirectory)/reports'
     reporttypes: 'SonarQube'
 
 #- script: 'dotnet tool install --global dotnet-reportgenerator-globaltool --version 4.5.8'  
@@ -40,15 +41,20 @@ steps:
   displayName: ReportGenerator
   inputs:
     reports: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
-    targetdir: '$(Build.SourcesDirectory)/coverlet/reports'
+    targetdir: '$(Build.SourcesDirectory)/reports'
     reporttypes: 'SonarQube'
     assemblyfilters: '-xunit\*'
 
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'VSTest'
+    testResultsFiles: '$(Agent.TempDirectory)/**.*trx'
+
 - task: PublishCodeCoverageResults@1
-  displayName: 'Publish code coverage from $(Build.SourcesDirectory)/coverlet/reports/coverage.cobertura.xml'
+  displayName: 'Publish code coverage from $(Build.SourcesDirectory)/reports/coverage.cobertura.xml'
   inputs:
     codeCoverageTool: Cobertura
-    summaryFileLocation: '$(Build.SourcesDirectory)/coverlet/reports/Cobertura.xml'
+    summaryFileLocation: '$(Build.SourcesDirectory)/reports/Cobertura.xml'
 
 - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
   displayName: 'Run Code Analysis'
