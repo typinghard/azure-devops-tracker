@@ -28,7 +28,7 @@ steps:
     projects: '**/*[Tt]ests/*.csproj'
     arguments: '--configuration $(BuildConfiguration) --collect "XPlat Code coverage" --output $(Build.ArtifactStagingDirectory)/coverlet/reports'
     targetdir: '$(Build.SourcesDirectory)/coverlet/reports'
-    reporttypes: 'HtmlInline_AzurePipelines;Xml;Html;Clover;Cobertura;SonarQube;DetailedXML'
+    reporttypes: 'SonarQube'
 
 #- script: 'dotnet tool install --global dotnet-reportgenerator-globaltool --version 4.5.8'  
 #  displayName: 'Install ReportGenerator tool'  
@@ -41,7 +41,7 @@ steps:
   inputs:
     reports: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
     targetdir: '$(Build.SourcesDirectory)/coverlet/reports'
-    reporttypes: 'HtmlInline_AzurePipelines;Xml;Html;Clover;Cobertura;SonarQube;DetailedXML'
+    reporttypes: 'SonarQube'
     assemblyfilters: '-xunit\*'
 
 - task: PublishCodeCoverageResults@1
