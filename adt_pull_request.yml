@@ -30,7 +30,7 @@ steps:
 - task: Palmmedia.reportgenerator.reportgenerator-build-release-task.reportgenerator@5
   displayName: ReportGenerator
   inputs:
-    reports: '**/*[Tt]ests/coverage.cobertura.xml'
+    reports: 'coverage.cobertura.xml'
     targetdir: '$(Build.SourcesDirectory)/CodeCoverage'
     reporttypes: 'HtmlInline_AzurePipelines;Cobertura;Badges'
     assemblyfilters: '-xunit\*'
