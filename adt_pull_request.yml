@@ -13,7 +13,8 @@ steps:
      # Additional properties that will be passed to the scanner, 
      # Put one key=value per line, example:
      # sonar.exclusions=**/*.bin
-     sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/**/*.trx
+     sonar.coverageReportPaths=$(Agent.TempDirectory)/**/*.trx
+     #sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/**/*.trx
      #sonar.coverageReportPaths=$(Agent.TempDirectory)/reports/SonarQube.xml
      #sonar.cs.dotcover.reportsPaths=$(Agent.TempDirectory)/reports/DetailedXML.xml
 
@@ -48,11 +49,11 @@ steps:
 #    reporttypes: 'SonarQube'
 #    assemblyfilters: '-xunit\*'
 
-- task: PublishCodeCoverageResults@1
-  displayName: 'Publish code coverage from $(Build.SourcesDirectory)/reports/coverage.cobertura.xml'
-  inputs:
-    codeCoverageTool: Cobertura
-    summaryFileLocation: '$(Build.SourcesDirectory)/reports/Cobertura.xml'
+#- task: PublishCodeCoverageResults@1
+#  displayName: 'Publish code coverage from $(Build.SourcesDirectory)/reports/coverage.cobertura.xml'
+#  inputs:
+#    codeCoverageTool: Cobertura
+#    summaryFileLocation: '$(Build.SourcesDirectory)/reports/Cobertura.xml'
 
 - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
   displayName: 'Run Code Analysis'
