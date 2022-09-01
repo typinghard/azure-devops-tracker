@@ -13,7 +13,7 @@ steps:
      # Additional properties that will be passed to the scanner, 
      # Put one key=value per line, example:
      # sonar.exclusions=**/*.bin
-     sonar.coverageReportPaths=$(Build.SourcesDirectory)/coverlet/reports/coverage.cobertura.xml
+     sonar.coverageReportPaths=./sonarqubecoverage/SonarQube.xml
 
 - task: CmdLine@2
   inputs:
@@ -25,12 +25,12 @@ steps:
   inputs:
     command: test
     projects: '**/*[Tt]ests/*.csproj'
-    arguments: '--configuration $(BuildConfiguration) --collect "XPlat Code coverage" -- RunConfiguration.DisableAppDomain=true'
+    arguments: '--configuration $(BuildConfiguration) --collect "XPlat Code coverage"'
 
 - script: 'dotnet tool install --global dotnet-reportgenerator-globaltool --version 4.5.8'  
   displayName: 'Install ReportGenerator tool'  
 
-- script: 'reportgenerator -reports:$(Agent.TempDirectory)/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/coverlet/reports -reporttypes:"Cobertura"'  
+- script: 'reportgenerator -reports:**/TestResults/*/coverage.cobertura.xml -targetdir:sonarqubecoverage -reporttypes:"SonarQube;Cobertura"'  
   displayName: 'Create reports'
   
 #- task: Palmmedia.reportgenerator.reportgenerator-build-release-task.reportgenerator@5
@@ -42,10 +42,10 @@ steps:
 #    #assemblyfilters: '-xunit\*'
 
 - task: PublishCodeCoverageResults@1
-  displayName: 'Publish code coverage from $(Build.SourcesDirectory)/coverlet/reports/coverage.cobertura.xml'
+  displayName: 'Publish code coverage from $(Build.SourcesDirectory)/**/TestResults/*/coverage.cobertura.xml'
   inputs:
     codeCoverageTool: Cobertura
-    summaryFileLocation: '$(Build.SourcesDirectory)/coverlet/reports/Cobertura.xml'
+    summaryFileLocation: '$(Build.SourcesDirectory)/**/TestResults/*/Cobertura.xml'
 
 - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
   displayName: 'Run Code Analysis'
