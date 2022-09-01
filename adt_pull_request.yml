@@ -20,7 +20,7 @@ steps:
   displayName: 'dotnet build $(buildConfiguration)'
 - script: |
     mkdir $(Build.SourcesDirectory)\results
-    dotnet teste --logger trx /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura  **/*[Tt]ests/*.csproj
+    dotnet teste --configuration $(buildConfiguration) --logger trx /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura  **/*[Tt]ests/*.csproj
     copy $(Agent.TempDirectory)\coverage.cobertura.xml $(Build.SourcesDirectory)\results
     dotnet tool install dotnet-reportgenerator-globaltool --tool-path . --version 4.0.0-rc4
     .\reportgenerator "-reports:$(Agent.TempDirectory)\coverage.cobertura.xml" "-targetdir:results" "-reporttypes:HTMLInline;HTMLChart"
