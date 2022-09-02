@@ -23,6 +23,7 @@ steps:
      #sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)\**\*.trx
      #sonar.cs.vscoveragexml.reportsPaths=$(Agent.TempDirectory)\**\*.coveragexml
      sonar.cs.vscoveragexml.reportsPaths=$(Build.SourcesDirectory)/tests/AzureDevopsTracker.Tests/coverage.opencover.xml
+     sonar.coverageReportPaths=$(Build.SourcesDirectory)/**/coverage.opencover.xml
      sonar.cs.opencover.reportsPaths=coverage.opencover.xml
 
 
