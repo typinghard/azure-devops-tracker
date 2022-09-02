@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System.Text.Json.Serialization;
 
-namespace AzureDevopsTracker.DTOs.Restore
+namespace AzureDevopsTracker.Dtos.Restore
 {
-    public record RestoreWorkItemDTO
+    public record RestoreWorkItemDto
     {
         [JsonPropertyName("resource")]
         [JsonProperty("resource")]

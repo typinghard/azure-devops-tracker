@@ -2,9 +2,9 @@
 using System;
 using System.Collections.Generic;
 
-namespace AzureDevopsTracker.DTOs
+namespace AzureDevopsTracker.Dtos
 {
-    public record WorkItemDTO
+    public record WorkItemDto
     {
         [JsonProperty("id")]
         public string Id { get; init; }
@@ -55,13 +55,13 @@ namespace AzureDevopsTracker.DTOs
         public IEnumerable<string> Tags { get; init; }
 
         [JsonProperty("workItems_changes")]
-        public List<WorkItemChangeDTO> WorkItemsChangesDTO { get; init; }
+        public List<WorkItemChangeDto> WorkItemsChangesDto { get; init; }
 
         [JsonProperty("times_by_state")]
-        public List<TimeByStateDTO> TimesByStateDTO { get; init; }
+        public List<TimeByStateDto> TimesByStateDto { get; init; }
     }
 
-    public record WorkItemChangeDTO
+    public record WorkItemChangeDto
     {
         [JsonProperty("new_date")]
         public DateTime NewDate { get; init; }
@@ -80,7 +80,7 @@ namespace AzureDevopsTracker.DTOs
     }
 
 
-    public record TimeByStateDTO
+    public record TimeByStateDto
     {
         [JsonProperty("created_at")]
         public DateTime CreatedAt { get; init; }

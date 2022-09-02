@@ -7,13 +7,13 @@ namespace AzureDevopsTracker.Entities
         public string Id { get; protected set; }
         public DateTime CreatedAt { get; private set; }
 
-        public Entity(string id)
+        protected Entity(string id)
         {
             Id = id ?? Guid.NewGuid().ToString();
             CreatedAt = DateTime.UtcNow;
         }
 
-        public Entity()
+        protected Entity()
         {
             Id = Guid.NewGuid().ToString();
             CreatedAt = DateTime.UtcNow;

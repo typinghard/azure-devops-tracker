@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System.Text.Json.Serialization;
 
-namespace AzureDevopsTracker.DTOs.Create
+namespace AzureDevopsTracker.Dtos.Create
 {
-    public record CreateWorkItemDTO
+    public record CreateWorkItemDto
     {
         [JsonPropertyName("resource")]
         [JsonProperty("resource")]

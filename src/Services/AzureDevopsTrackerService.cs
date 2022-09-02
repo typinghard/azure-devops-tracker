@@ -1,8 +1,8 @@
-﻿using AzureDevopsTracker.DTOs;
-using AzureDevopsTracker.DTOs.Create;
-using AzureDevopsTracker.DTOs.Delete;
-using AzureDevopsTracker.DTOs.Restore;
-using AzureDevopsTracker.DTOs.Update;
+﻿using AzureDevopsTracker.Dtos;
+using AzureDevopsTracker.Dtos.Create;
+using AzureDevopsTracker.Dtos.Delete;
+using AzureDevopsTracker.Dtos.Restore;
+using AzureDevopsTracker.Dtos.Update;
 using AzureDevopsTracker.Entities;
 using AzureDevopsTracker.Extensions;
 using AzureDevopsTracker.Helpers;
@@ -36,7 +36,7 @@ namespace AzureDevopsTracker.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task Create(CreateWorkItemDTO create, bool addWorkItemChange = true)
+        public async Task Create(CreateWorkItemDto create, bool addWorkItemChange = true)
         {
             var workItem = new WorkItem(create.Resource.Id);
 
@@ -67,9 +67,9 @@ namespace AzureDevopsTracker.Services
 
         public async Task Create(string workItemId, Fields fields)
         {
-            var createDto = new CreateWorkItemDTO()
+            var createDto = new CreateWorkItemDto()
             {
-                Resource = new DTOs.Resource()
+                Resource = new Dtos.Resource()
                 {
                     Fields = fields,
                     Id = workItemId,
@@ -79,7 +79,7 @@ namespace AzureDevopsTracker.Services
             await Create(createDto, false);
         }
 
-        public async Task Update(UpdatedWorkItemDTO update)
+        public async Task Update(UpdatedWorkItemDto update)
         {
             if (!_workItemRepository.Exist(update.Resource.WorkItemId).Result)
                 await Create(update.Resource.WorkItemId, update.Resource.Revision.Fields);
@@ -112,7 +112,7 @@ namespace AzureDevopsTracker.Services
             await _workItemRepository.SaveChangesAsync();
         }
 
-        public async Task Delete(DeleteWorkItemDTO delete)
+        public async Task Delete(DeleteWorkItemDto delete)
         {
             if (!_workItemRepository.Exist(delete.Resource.Id).Result)
                 await Create(delete.Resource.Id, delete.Resource.Fields);
@@ -143,7 +143,7 @@ namespace AzureDevopsTracker.Services
             await _workItemRepository.SaveChangesAsync();
         }
 
-        public async Task Restore(RestoreWorkItemDTO restore)
+        public async Task Restore(RestoreWorkItemDto restore)
         {
             if (!_workItemRepository.Exist(restore.Resource.Id).Result)
                 await Create(restore.Resource.Id, restore.Resource.Fields);
@@ -174,13 +174,13 @@ namespace AzureDevopsTracker.Services
             await _workItemRepository.SaveChangesAsync();
         }
 
-        public async Task<WorkItemDTO> GetByWorkItemId(string workItemId)
+        public async Task<WorkItemDto> GetByWorkItemId(string workItemId)
         {
             var workItem = await _workItemRepository.GetByWorkItemId(workItemId);
             if (workItem is null)
                 return null;
 
-            return _workItemAdapter.ToWorkItemDTO(workItem);
+            return _workItemAdapter.ToWorkItemDto(workItem);
         }
 
         #region Support Methods
@@ -226,7 +226,7 @@ namespace AzureDevopsTracker.Services
             return new WorkItemChange(workItemId, changedBy.ExtractEmail(), iterationPath, newDate, newState, oldState, oldDate);
         }
 
-        public void AddWorkItemChange(WorkItem workItem, CreateWorkItemDTO create)
+        public void AddWorkItemChange(WorkItem workItem, CreateWorkItemDto create)
         {
             var workItemChange = ToWorkItemChange(workItem.Id,
                                                   create.Resource.Fields.ChangedBy,
@@ -240,7 +240,7 @@ namespace AzureDevopsTracker.Services
             workItem.AddWorkItemChange(workItemChange);
         }
 
-        public void AddWorkItemChange(WorkItem workItem, UpdatedWorkItemDTO update)
+        public void AddWorkItemChange(WorkItem workItem, UpdatedWorkItemDto update)
         {
             if (update.Resource.Fields.State is null) return;
             if (update.Resource.Fields.StateChangeDate is null) return;
