@@ -24,6 +24,9 @@ steps:
     script: dotnet build --no-incremental
   displayName: 'Run dotnet build'
 
+- script: 'dotnet tool install --global coverlet.console'  
+  displayName: 'Install coverlet global tool'  
+
 - task: DotNetCoreCLI@2
   displayName: 'Run dotnet test'
   inputs:
