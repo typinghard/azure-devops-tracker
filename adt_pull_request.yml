@@ -69,14 +69,14 @@ steps:
 #    reporttypes: 'SonarQube'
 #    assemblyfilters: '-xunit\*'
 
-- task: PublishCodeCoverageResults@1
-  displayName: Publish code coverage
-  inputs:
-    codeCoverageTool: Opencover
-    summaryFileLocation: $(Agent.TempDirectory)/**/coverage.opencover.xml
-    pathToSources: $(BuildParameters.pathToSources)
-    reportDirectory: $(build.artifactstagingdirectory)/Coverage/
-    failIfCoverageEmpty: true
+#- task: PublishCodeCoverageResults@1
+#  displayName: Publish code coverage
+#  inputs:
+#    codeCoverageTool: Opencover
+#    summaryFileLocation: $(Agent.TempDirectory)/**/coverage.opencover.xml
+#    pathToSources: $(BuildParameters.pathToSources)
+#    reportDirectory: $(build.artifactstagingdirectory)/Coverage/
+#    failIfCoverageEmpty: true
 
 - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
   displayName: 'Run Code Analysis'
