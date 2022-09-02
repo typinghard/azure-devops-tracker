@@ -21,11 +21,6 @@ steps:
 
 - task: CmdLine@2
   inputs:
-    script: dotnet restore
-  displayName: 'Run dotnet restore'
-
-- task: CmdLine@2
-  inputs:
     script: dotnet build --no-incremental
   displayName: 'Run dotnet build'
 
