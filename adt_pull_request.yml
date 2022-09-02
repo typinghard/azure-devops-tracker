@@ -23,8 +23,7 @@ steps:
      #sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)\**\*.trx
      #sonar.cs.vscoveragexml.reportsPaths=$(Agent.TempDirectory)\**\*.coveragexml
      sonar.cs.vscoveragexml.reportsPaths=$(Agent.TempDirectory)/tests/*/coverage.opencover.xml
-     sonar.cs.opencover.reportsPaths=coverage.xml
-     sonar.verbose=true
+     sonar.cs.opencover.reportsPaths=coverage.opencover.xml
 
 
 - task: CmdLine@2
