@@ -17,15 +17,15 @@ steps:
 - task: CmdLine@2
   inputs:
     script: dotnet restore
-  displayName: 'Rodando dotnet restore'
+  displayName: 'Run dotnet restore'
 
 - task: CmdLine@2
   inputs:
     script: dotnet build --no-incremental
-  displayName: 'Rodando dotnet build'
+  displayName: 'Run dotnet build'
 
 - task: DotNetCoreCLI@2
-  displayName: 'Rodando dotnet test'
+  displayName: 'Run dotnet test'
   inputs:
     command: test
     projects: '**/*[Tt]ests/*.csproj'
