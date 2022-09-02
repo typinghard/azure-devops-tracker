@@ -17,14 +17,14 @@ steps:
      #sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/**/*.trx
      #sonar.coverageReportPaths=$(Agent.TempDirectory)/reports/SonarQube.xml
      #sonar.cs.dotcover.reportsPaths=$(Agent.TempDirectory)/reports/DetailedXML.xml
-     #sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/coverage.opencover.xml
-     #sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/**/*.trx
-     #sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)\**\*.trx
-     #sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)\**\*.trx
-     #sonar.cs.vscoveragexml.reportsPaths=$(Agent.TempDirectory)\**\*.coveragexml
-     #sonar.cs.vscoveragexml.reportsPaths=$(Agent.TempDirectory)\**\coverage.opencover.xml
-     sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)\**\coverage.opencover.xml
-     #sonar.cs.opencover.reportsPaths=coverage.xml
+     sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/coverage.opencover.xml
+     sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/**/*.trx
+     sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)\**\*.trx
+     sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)\**\*.trx
+     sonar.cs.vscoveragexml.reportsPaths=$(Agent.TempDirectory)\**\*.coveragexml
+     sonar.cs.vscoveragexml.reportsPaths=coverage.xml
+     sonar.cs.opencover.reportsPaths=coverage.xml
+     sonar.verbose=true
 
 - task: CmdLine@2
   inputs:
