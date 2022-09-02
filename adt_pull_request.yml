@@ -13,28 +13,58 @@ steps:
      # Additional properties that will be passed to the scanner, 
      # Put one key=value per line, example:
      # sonar.exclusions=**/*.bin
-     sonar.cs.opencover.reportsPaths=coverage.xml
+     #sonar.coverageReportPaths=$(Agent.TempDirectory)/**/*.trx
+     #sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/**/*.trx
+     #sonar.coverageReportPaths=$(Agent.TempDirectory)/reports/SonarQube.xml
+     #sonar.cs.dotcover.reportsPaths=$(Agent.TempDirectory)/reports/DetailedXML.xml
+     #sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/coverage.opencover.xml
+     #sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/**/*.trx
+     #sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)\**\*.trx
+     #sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)\**\*.trx
+     #sonar.cs.vscoveragexml.reportsPaths=$(Agent.TempDirectory)\**\*.coveragexml
+     #sonar.cs.vscoveragexml.reportsPaths=$(Agent.TempDirectory)\**\coverage.opencover.xml
+     sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)\**\coverage.opencover.xml
+     #sonar.cs.opencover.reportsPaths=coverage.xml
 
 - task: CmdLine@2
   inputs:
     script: dotnet build --no-incremental
   displayName: 'Rodando dotnet build'
 
-#- task: DotNetCoreCLI@2
-#  displayName: 'Rodando dotnet test'
-#  inputs:
-#    command: test
-#    projects: '**/*[Tt]ests/*.csproj'
-#    arguments: '--configuration $(BuildConfiguration) --collect "Code Coverage"'
-
-- script: 'dotnet test --collect:"XPlat Code Coverage"'  
-  displayName: 'Rodando Testes' 
+- task: DotNetCoreCLI@2
+  displayName: 'Rodando dotnet test'
+  inputs:
+    command: test
+    projects: '**/*[Tt]ests/*.csproj'
+    arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --collect "Code Coverage"'
 
 - script: 'dotnet tool install --global coverlet.console'  
-  displayName: 'Instalando ferramenta global coverlet.console'  
+  displayName: 'Install coverlet global tool'  
+
+#- script: 'reportgenerator -reports:$(Agent.TempDirectory)/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/coverlet/reports -reporttypes:"Cobertura"'  
+#  displayName: 'Create reports'
 
 - script: coverlet *.Tests.dll --target "dotnet"  --targetargs "test --no-build" -f=opencover  -o="coverage.xml"
-  displayName: 'Rodando coverlet'  
+  displayName: 'Run coverlet'  
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'VSTest'
+    testResultsFiles: '$(Agent.TempDirectory)/**.*trx'
+
+#- task: Palmmedia.reportgenerator.reportgenerator-build-release-task.reportgenerator@5
+#  displayName: ReportGenerator
+#  inputs:
+#    reports: '$(Agent.TempDirectory)/coverage.cobertura.xml'
+#    targetdir: '$(Build.SourcesDirectory)/reports'
+#    reporttypes: 'SonarQube'
+#    assemblyfilters: '-xunit\*'
+
+#- task: PublishCodeCoverageResults@1
+#  displayName: 'Publish code coverage from $(Build.SourcesDirectory)/reports/coverage.cobertura.xml'
+#  inputs:
+#    codeCoverageTool: Cobertura
+#    summaryFileLocation: '$(Build.SourcesDirectory)/reports/Cobertura.xml'
 
 - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
   displayName: 'Run Code Analysis'
