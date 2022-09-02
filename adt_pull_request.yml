@@ -17,12 +17,12 @@ steps:
      #sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/**/*.trx
      #sonar.coverageReportPaths=$(Agent.TempDirectory)/reports/SonarQube.xml
      #sonar.cs.dotcover.reportsPaths=$(Agent.TempDirectory)/reports/DetailedXML.xml
-     sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/coverage.opencover.xml
-     sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/**/*.trx
-     sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)\**\*.trx
-     sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)\**\*.trx
-     sonar.cs.vscoveragexml.reportsPaths=$(Agent.TempDirectory)\**\*.coveragexml
-     sonar.cs.vscoveragexml.reportsPaths=coverage.xml
+     #sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/coverage.opencover.xml
+     #sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/**/*.trx
+     #sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)\**\*.trx
+     #sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)\**\*.trx
+     #sonar.cs.vscoveragexml.reportsPaths=$(Agent.TempDirectory)\**\*.coveragexml
+     #sonar.cs.vscoveragexml.reportsPaths=coverage.xml
      sonar.cs.opencover.reportsPaths=coverage.xml
      sonar.verbose=true
 
@@ -37,6 +37,9 @@ steps:
     script: dotnet build --no-incremental
   displayName: 'Rodando dotnet build'
 
+- script: 'dotnet tool install --global coverlet.console'  
+  displayName: 'Install coverlet global tool'  
+
 - task: DotNetCoreCLI@2
   displayName: 'Rodando dotnet test'
   inputs:
@@ -44,13 +47,10 @@ steps:
     projects: '**/*[Tt]ests/*.csproj'
     arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --collect "Code Coverage"'
 
-- script: 'dotnet tool install --global coverlet.console'  
-  displayName: 'Install coverlet global tool'  
-
 #- script: 'reportgenerator -reports:$(Agent.TempDirectory)/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/coverlet/reports -reporttypes:"Cobertura"'  
 #  displayName: 'Create reports'
 
-- script: coverlet *.Tests.dll --target "dotnet"  --targetargs "test --no-build" -f=opencover  -o="coverage.xml"
+- script: coverlet *.Tests.dll --target "dotnet"  --targetargs "test --build" -f=opencover  -o="coverage.opencover.xml'"
   displayName: 'Run coverlet'  
 
 - task: PublishTestResults@2
@@ -66,11 +66,11 @@ steps:
 #    reporttypes: 'SonarQube'
 #    assemblyfilters: '-xunit\*'
 
-- task: PublishCodeCoverageResults@1
-  displayName: 'Publish code coverage from $(Build.SourcesDirectory)/coverage.xml'
-  inputs:
-    codeCoverageTool: Cobertura
-    summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
+#- task: PublishCodeCoverageResults@1
+#  displayName: 'Publish code coverage from $(Build.SourcesDirectory)/coverage.xml'
+#  inputs:
+#    codeCoverageTool: Cobertura
+#    summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
 
 - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
   displayName: 'Run Code Analysis'
