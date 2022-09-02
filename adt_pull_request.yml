@@ -28,15 +28,10 @@ steps:
     arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --collect "Code Coverage"'
 
 - script: 'dotnet tool install --global coverlet.console'  
-  displayName: 'Install coverlet global tool'  
+  displayName: 'Instalando ferramenta global coverlet.console'  
 
 - script: coverlet *.Tests.dll --target "dotnet"  --targetargs "test --no-build" -f=opencover  -o="coverage.xml"
-  displayName: 'Run coverlet'  
-
-- task: PublishTestResults@2
-  inputs:
-    testResultsFormat: 'VSTest'
-    testResultsFiles: '$(Agent.TempDirectory)/**.*trx'
+  displayName: 'Rodando coverlet'  
 
 - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
   displayName: 'Run Code Analysis'
