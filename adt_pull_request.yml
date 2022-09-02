@@ -11,7 +11,8 @@ steps:
     projectKey: 'typinghard_azure-devops-tracker'
     extraProperties: |
      sonar.exclusions=**/obj/**,**/*.dll
-     sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/**/coverage.opencover.xml
+     sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
+     sonar.cs.vscoveragexml.reportsPaths=**/coverage.opencover.xml
      sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
 
 - task: CmdLine@2
