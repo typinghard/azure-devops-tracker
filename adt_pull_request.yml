@@ -20,12 +20,15 @@ steps:
     script: dotnet build --no-incremental
   displayName: 'Rodando dotnet build'
 
-- task: DotNetCoreCLI@2
-  displayName: 'Rodando dotnet test'
-  inputs:
-    command: test
-    projects: '**/*[Tt]ests/*.csproj'
-    arguments: '--configuration $(BuildConfiguration) -collect:"XPlat Code Coverage" -r "_codeCoverage"'
+#- task: DotNetCoreCLI@2
+#  displayName: 'Rodando dotnet test'
+#  inputs:
+#    command: test
+#    projects: '**/*[Tt]ests/*.csproj'
+#    arguments: '--configuration $(BuildConfiguration) --collect "Code Coverage"'
+
+- script: 'dotnet test --collect:"XPlat Code Coverage"'  
+  displayName: 'Rodando Testes' 
 
 - script: 'dotnet tool install --global coverlet.console'  
   displayName: 'Instalando ferramenta global coverlet.console'  
