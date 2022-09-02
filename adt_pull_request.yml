@@ -23,6 +23,7 @@ steps:
      sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)\**\*.trx
      sonar.cs.vscoveragexml.reportsPaths=$(Agent.TempDirectory)\**\*.coveragexml
      sonar.cs.vscoveragexml.reportsPaths=coverage.xml
+     sonar.cs.opencover.reportsPaths=coverage.xml
      sonar.verbose=true
 
 - task: CmdLine@2
@@ -40,14 +41,10 @@ steps:
 - script: 'dotnet tool install --global coverlet.console'  
   displayName: 'Install coverlet tool'  
 
-- script: Install-Package coverlet.collector -Version 3.1.2  
-  displayName: 'Install coverlet collector tool'  
-
-
 #- script: 'reportgenerator -reports:$(Agent.TempDirectory)/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/coverlet/reports -reporttypes:"Cobertura"'  
 #  displayName: 'Create reports'
 
-- script: dotnet-coverage collect 'dotnet test' -f xml  -o 'coverage.xml'
+- script: coverlet *.Tests.dll --target "dotnet"  --targetargs "test --no-build" -f=opencover  -o="coverage.xml"
   displayName: 'Run dotnet-coverage'  
 
 - task: PublishTestResults@2
