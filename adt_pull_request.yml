@@ -70,9 +70,9 @@ steps:
 #    assemblyfilters: '-xunit\*'
 
 - task: PublishCodeCoverageResults@1
-  displayName: 'Publish code coverage from $(Build.SourcesDirectory)/coverage.xml'
+  displayName: Publish code coverage
   inputs:
-    codeCoverageTool: Cobertura
+    codeCoverageTool: Opencover
     summaryFileLocation: $(Agent.TempDirectory)/**/coverage.cobertura.xml
     pathToSources: $(BuildParameters.pathToSources)
     reportDirectory: $(build.artifactstagingdirectory)/Coverage/
