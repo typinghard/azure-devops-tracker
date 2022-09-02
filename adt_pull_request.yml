@@ -23,7 +23,10 @@ steps:
      #sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)\**\*.trx
      #sonar.cs.vscoveragexml.reportsPaths=$(Agent.TempDirectory)\**\*.coveragexml
      #sonar.cs.vscoveragexml.reportsPaths=$(Build.SourcesDirectory)/tests/AzureDevopsTracker.Tests/coverage.opencover.xml
-     sonar.coverageReportPaths=$(Build.SourcesDirectory)/tests/AzureDevopsTracker.Tests/coverage.opencover.xml
+     #sonar.coverageReportPaths=$(Build.SourcesDirectory)/tests/AzureDevopsTracker.Tests/coverage.opencover.xml
+     sonar.exclusions=**/obj/**,**/*.dll
+     sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/**/coverage.opencover.xml
+     sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
      #sonar.cs.opencover.reportsPaths=coverage.opencover.xml
 
 
@@ -45,7 +48,7 @@ steps:
   inputs:
     command: test
     projects: '**/*[Tt]ests/*.csproj'
-    arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --collect "Code Coverage" /p:Exclude=[xunit.*]*'
+    arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=\"cobertura,opencover\" --collect "Code Coverage" /p:Exclude=[xunit.*]*'
 
 #- script: 'reportgenerator -reports:$(Agent.TempDirectory)/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/coverlet/reports -reporttypes:"Cobertura"'  
 #  displayName: 'Create reports'
@@ -66,11 +69,14 @@ steps:
 #    reporttypes: 'SonarQube'
 #    assemblyfilters: '-xunit\*'
 
-#- task: PublishCodeCoverageResults@1
-#  displayName: 'Publish code coverage from $(Build.SourcesDirectory)/coverage.xml'
-#  inputs:
-#    codeCoverageTool: Cobertura
-#    summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
+- task: PublishCodeCoverageResults@1
+  displayName: 'Publish code coverage from $(Build.SourcesDirectory)/coverage.xml'
+  inputs:
+    codeCoverageTool: Cobertura
+    summaryFileLocation: $(Agent.TempDirectory)/**/coverage.cobertura.xml
+    pathToSources: $(BuildParameters.pathToSources)
+    reportDirectory: $(build.artifactstagingdirectory)/Coverage/
+    failIfCoverageEmpty: true
 
 - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
   displayName: 'Run Code Analysis'
