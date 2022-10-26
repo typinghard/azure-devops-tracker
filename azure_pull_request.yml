@@ -21,14 +21,9 @@ steps:
      sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
 
 - task: CmdLine@2
-  displayName: 'Run Build'
   inputs:
-    script: dotnet build --no-incremental
-
-- task: CmdLine@2
+    script: dotnet test --configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --collect "Code Coverage" /p:Exclude=[xunit.*]*
   displayName: 'Run Tests'
-  inputs:
-    script: dotnet test --configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --collect "Code Coverage" /p:Exclude=[xunit.*]* --no-restore --no-build
 
 - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
   displayName: 'Run Code Analysis'
