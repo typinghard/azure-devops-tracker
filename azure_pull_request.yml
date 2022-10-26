@@ -22,14 +22,14 @@ steps:
 - task: CmdLine@2
   inputs:
     script: dotnet build --no-incremental
-  displayName: 'Run dotnet build'
+  displayName: 'Run Build'
 
 - task: DotNetCoreCLI@2
   displayName: 'Run dotnet test'
   inputs:
     command: test
     projects: '**/*[Tt]ests/*.csproj'
-    arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --collect "Code Coverage" /p:Exclude=[xunit.*]*'
+    arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --collect "Code Coverage" /p:Exclude=[xunit.*]*' --no-restore --no-build
 
 - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
   displayName: 'Run Code Analysis'
