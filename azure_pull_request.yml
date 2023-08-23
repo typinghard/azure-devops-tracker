@@ -17,7 +17,6 @@ pr:
   variables:
     buildConfiguration: 'Release'
     prPipeline: $[eq(variables['Build.Reason'], 'PullRequest')]
-
   steps:
     - task: SonarSource.sonarcloud.14d9cde6-c1da-4d55-aa01-2965cd301255.SonarCloudPrepare@1
       displayName: 'Prepare analysis on SonarCloud'
@@ -26,10 +25,10 @@ pr:
         organization: typinghard
         projectKey: 'typinghard_azure-devops-tracker'
         extraProperties: |
-         sonar.exclusions=**/obj/**,**/*.dll
-         sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
-         sonar.cs.vscoveragexml.reportsPaths=**/coverage.opencover.xml
-         sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
+          sonar.exclusions=**/obj/**,**/*.dll
+          sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
+          sonar.cs.vscoveragexml.reportsPaths=**/coverage.opencover.xml
+          sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
     
     - task: CmdLine@2
       inputs:
@@ -40,4 +39,4 @@ pr:
       displayName: 'Run Code Analysis'
     
     - task: SonarSource.sonarcloud.38b27399-a642-40af-bb7d-9971f69712e8.SonarCloudPublish@1
-      displayName: 'Publish Quality Gate Result' 
+      displayName: 'Publish Quality Gate Result'
