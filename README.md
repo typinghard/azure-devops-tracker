@@ -36,13 +36,15 @@ The **Azure DevOps Tracker** brings automatically tracking of Workitems and will
   
   ✅ A Project
 
+ ### - Changelog: With Azure DevOps Tracker you can easily inform what was done by your team. Actually, we have integration with Microsoft Teams and Discord!
+
  ### Possibility to connect to a BI Tool 📊
  ### Your creativity is the limit! 🚀
 
 
 # Installation
 ```c#
-PM > Install-Package AzureDevOpsTracker -Version 1.0.1
+PM > Install-Package AzureDevOpsTracker
 ``` 
 For more instructions and examples, go to our [Wiki](https://github.com/typinghard/azure-devops-tracker/wiki). 
  - [English](https://github.com/typinghard/azure-devops-tracker/wiki/English) 🇺🇸
