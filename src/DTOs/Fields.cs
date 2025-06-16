@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using AzureDevopsTracker.JsonConverters;
+using Newtonsoft.Json;
 using System;
 using System.Text.Json.Serialization;
 
@@ -32,6 +33,7 @@ namespace AzureDevopsTracker.Dtos
 
         [JsonPropertyName("System.CreatedBy")]
         [JsonProperty("System.CreatedBy")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(CreatedByJsonConverter))]
         public string CreatedBy { get; init; }
 
         [JsonPropertyName("System.ChangedBy")]
