@@ -7,40 +7,35 @@ namespace AzureDevopsTracker.Helpers
 {
     public static class ReadJsonHelper
     {
+
         public static IEnumerable<WorkItemCustomField> ReadJson(string workItemId, string jsonTexto)
         {
             try
             {
-                var workItemCustomFields = new List<WorkItemCustomField>();
-                foreach (KeyValuePair<string, JToken> element in JObject.Parse(jsonTexto))
+                JObject json = JObject.Parse(jsonTexto);
+                JObject? fields = json.SelectToken("resource.revision.fields") as JObject;
+                if (fields == null)
                 {
-                    if (element.Value is JObject)
-                        ReadJsonObject(workItemId, workItemCustomFields, (JObject)element.Value);
-                    else
-                        GetWorkItemCustomField(workItemCustomFields, workItemId, element.Key, element.Value.ToString());
+                    return Enumerable.Empty<WorkItemCustomField>();
+                }
+                var workItemCustomFields = new List<WorkItemCustomField>();
+
+                foreach (var property in fields.Properties())
+                {
+                    if (property.Name.StartsWith("Custom."))
+                    {
+                        string key = property.Name["Custom.".Length..];
+                        string value = property.Value.ToString();
+                        workItemCustomFields.Add(new WorkItemCustomField(workItemId, key, value));
+                    }
                 }
 
                 return workItemCustomFields;
             }
             catch
             {
-                return Enumerable.Empty<WorkItemCustomField>();
+                return [];
             }
-        }
-
-        private static void ReadJsonObject(string workItemId, List<WorkItemCustomField> workItemCustomFields, JObject objeto)
-        {
-            foreach (KeyValuePair<string, JToken> item in objeto)
-                if (item.Value is JObject)
-                    ReadJsonObject(workItemId, workItemCustomFields, (JObject)item.Value);
-                else
-                    GetWorkItemCustomField(workItemCustomFields, workItemId, item.Key, item.Value.ToString());
-        }
-
-        private static void GetWorkItemCustomField(List<WorkItemCustomField> workItemCustomFields, string workItemId, string key, string value)
-        {
-            if (key is not null && !key.ToLower().Contains("custom")) return;
-            workItemCustomFields.Add(new WorkItemCustomField(workItemId, key, value));
         }
     }
 }
